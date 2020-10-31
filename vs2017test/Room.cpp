@@ -1,5 +1,4 @@
 #include "Room.h"
-#include <math.h>
 
 Room::Room()
 {

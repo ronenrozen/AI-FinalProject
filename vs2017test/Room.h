@@ -1,14 +1,10 @@
+#ifndef __ROOM_H
+#define __ROOM_H
+
 #pragma once
-
-const int MSZ = 100;
-const int WALL = 1;
-const int SPACE = 2;
-const int START = 3;
-const int PATH = 5;
-const int GRAY = 6;
-const int BLACK_SPACE = 7;
-const int TARGET = 8;
-
+#include "Room.h"
+#include <math.h>
+#include "Const.h"
 
 class Room
 {
@@ -33,3 +29,4 @@ public:
 
 };
 
+#endif // __ROOM_H
