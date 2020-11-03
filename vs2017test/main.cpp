@@ -22,17 +22,17 @@ int maze[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
-
+std::set<Player> players;
 bool start_BFS = false;
 
 
 Bullet* pb = nullptr;
 Grenade* pg = nullptr;
-Player* player;
 Point2D** storages;
 
 void SetupMaze();
-
+void initTwoPlayers();
+void initStorages();
 void init()
 {
 	//    RED, GREEN, BLUE
@@ -44,10 +44,8 @@ void init()
 
 	SetupMaze();
 
-	Point2D* playersPos;
-	playersPos = new Point2D(MSZ / 2, MSZ / 2);
-	player = new Player(playersPos);
-	maze[playersPos->getY()][playersPos->getX()] = PLAYER;
+	initTwoPlayers();
+	initStorages();
 
 	/*monster = new Monster * [NUMBER_OF_MONSTER];
 	Point2D** pos;
@@ -339,7 +337,7 @@ void SetupMaze()
 	DigPathes();
 }
 
-set<int> roomsNumForStorage() {
+set<int> randomTwoRoomsNums() {
 	std::set<int> roomsToStorage;
 	do {
 		int roomNum = rand() % NUM_ROOMS;
@@ -553,6 +551,43 @@ void mouse(int button, int state, int x, int y)
 
 		// pb = new Bullet(bx, by, false, dx, dy);
 		pg = new Grenade(bx, by);
+	}
+}
+
+void initTwoPlayers() {
+	std::set<int> randomTwoRooms = randomTwoRoomsNums();
+	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++){
+		Point2D* playersPos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		playersPos = new Point2D(room.GetCenterX(), room.GetCenterY());
+		Player *player = new Player(playersPos);
+		maze[playersPos->getY()][playersPos->getX()] = PLAYER;
+		//players.insert(*player); 
+	}
+}
+
+void initStorages() {
+	std::set<int> randomTwoRoomsForHealthStorage = randomTwoRoomsNums();
+
+	for (auto it = randomTwoRoomsForHealthStorage.begin(); it != randomTwoRoomsForHealthStorage.end(); it++) {
+		Point2D* healthStoragePos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		int xPos = room.GetCenterX() + abs(room.GetWidth() / 3);
+		int yPos = room.GetCenterY() + abs(room.GetHeight() / 3);
+		healthStoragePos = new Point2D(xPos, yPos);
+		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
+	}
+	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
+	for (auto it = randomTwoRoomsForAmmoStorage.begin(); it != randomTwoRoomsForAmmoStorage.end(); it++) {
+		Point2D* healthStoragePos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		int xPos = room.GetCenterX() - abs(room.GetWidth() / 3);
+		int yPos = room.GetCenterY() - abs(room.GetHeight() / 3);
+		healthStoragePos = new Point2D(xPos, yPos);
+		maze[healthStoragePos->getY()][healthStoragePos->getX()] = AMMO_STORAGE;
 	}
 }
 

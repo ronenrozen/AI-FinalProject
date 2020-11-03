@@ -13,7 +13,7 @@ const double SPACE_COST = 0.05;
 const double WALL_COST = 2;
 
 const int MAX_STORAGE = 2; 
-
+const int MAX_PLAYERS = 2;
 const int MSZ = 100;
 const int WALL = 1;
 const int SPACE = 2;
