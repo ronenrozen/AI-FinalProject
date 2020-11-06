@@ -24,4 +24,5 @@ const int BLACK_SPACE = 7;
 const int TARGET = 8;
 const int HEALTH_STORAGE = 9;
 const int AMMO_STORAGE = 10;
-const int PLAYER = 11;
+const int PLAYER1 = 11;
+const int PLAYER2 = 12;
