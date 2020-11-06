@@ -14,7 +14,7 @@
 #include <set>
 #include "Point2D.h"
 #include "Player.h"
-
+#include "Storage.h"
 using namespace std;
 
 
@@ -22,7 +22,9 @@ int maze[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
-std::set<Player> players;
+std::vector<Player> players;
+std::vector<Storage> ammoStorages;
+std::vector<Storage> healthStorages;
 bool start_BFS = false;
 
 
@@ -389,8 +391,11 @@ void DrawMaze()
 			case AMMO_STORAGE:
 				glColor3d(0, 0, 0);
 				break;
-			case PLAYER:
-				glColor3d(1, 0, 1);
+			case PLAYER1:
+				glColor3d(0, 0, 1);
+				break;
+			case PLAYER2:
+				glColor3d(0, 1, 0);
 				break;
 
 
@@ -555,6 +560,7 @@ void mouse(int button, int state, int x, int y)
 }
 
 void initTwoPlayers() {
+	int count = 11;
 	std::set<int> randomTwoRooms = randomTwoRoomsNums();
 	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++){
 		Point2D* playersPos;
@@ -562,8 +568,9 @@ void initTwoPlayers() {
 		Room room = rooms[roomNum];
 		playersPos = new Point2D(room.GetCenterX(), room.GetCenterY());
 		Player *player = new Player(playersPos);
-		maze[playersPos->getY()][playersPos->getX()] = PLAYER;
-		//players.insert(*player); 
+		maze[playersPos->getY()][playersPos->getX()] = count;
+		count++;
+		players.push_back(*player); 
 	}
 }
 
@@ -577,17 +584,21 @@ void initStorages() {
 		int xPos = room.GetCenterX() + abs(room.GetWidth() / 3);
 		int yPos = room.GetCenterY() + abs(room.GetHeight() / 3);
 		healthStoragePos = new Point2D(xPos, yPos);
+		Storage *healthStorage = new Storage(healthStoragePos);
 		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
+		healthStorages.push_back(*healthStorage);
 	}
 	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
 	for (auto it = randomTwoRoomsForAmmoStorage.begin(); it != randomTwoRoomsForAmmoStorage.end(); it++) {
-		Point2D* healthStoragePos;
+		Point2D* ammoStoragePos;
 		int roomNum = *it;
 		Room room = rooms[roomNum];
 		int xPos = room.GetCenterX() - abs(room.GetWidth() / 3);
 		int yPos = room.GetCenterY() - abs(room.GetHeight() / 3);
-		healthStoragePos = new Point2D(xPos, yPos);
-		maze[healthStoragePos->getY()][healthStoragePos->getX()] = AMMO_STORAGE;
+		ammoStoragePos = new Point2D(xPos, yPos);
+		Storage *ammoStorage = new Storage(ammoStoragePos);
+		maze[ammoStoragePos->getY()][ammoStoragePos->getX()] = AMMO_STORAGE;
+		ammoStorages.push_back(*ammoStorage);
 	}
 }
 
