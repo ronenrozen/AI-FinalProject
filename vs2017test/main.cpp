@@ -2,6 +2,7 @@
 #include <time.h>
 #include <vector>
 #include <iostream>
+#include "Const.h"
 #include "Node.h"
 #include "Room.h"
 #include <queue>
@@ -9,37 +10,29 @@
 #include "Bullet.h"
 #include <math.h>
 #include "Grenade.h"
+#include <list>
+#include <set>
+#include "Point2D.h"
+#include "Player.h"
 
 using namespace std;
 
-const int W = 600; // window width
-const int H = 600; // window height
-
-const int NUM_ROOMS = 12;
-
-const int TOP = 1;
-const int BOTTOM = 2;
-const int LEFT = 3;
-const int RIGHT = 4;
-
-const double SPACE_COST = 0.05;
-const double WALL_COST = 2;
-
 
 int maze[MSZ][MSZ];
-double security_map[MSZ][MSZ] = {0};
+double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
-
+std::set<Player> players;
 bool start_BFS = false;
 
 
 Bullet* pb = nullptr;
 Grenade* pg = nullptr;
-
+Point2D** storages;
 
 void SetupMaze();
-
+void initTwoPlayers();
+void initStorages();
 void init()
 {
 	//    RED, GREEN, BLUE
@@ -47,9 +40,38 @@ void init()
 
 	srand(time(0));
 	// define main axes
-	glOrtho(-1, 1, -1, 1, -1, 1); 
+	glOrtho(-1, 1, -1, 1, -1, 1);
 
 	SetupMaze();
+
+	initTwoPlayers();
+	initStorages();
+
+	/*monster = new Monster * [NUMBER_OF_MONSTER];
+	Point2D** pos;
+	pos = new Point2D * [NUMBER_OF_MONSTER];
+	int x, y;
+	for (int i = 0; i < NUMBER_OF_MONSTER; i++)
+	{
+		x = rand() % MSZ;
+		y = rand() % MSZ;
+		pos[i] = new Point2D(x, y);
+		monster[i] = new Monster(pos[i], players);
+		maze[y][x] = MONSTER;
+	}
+	pacman->setMonsters(NUMBER_OF_MONSTER, pos);
+	delete[] pos;
+
+	coins = new Point2D * [NUMBER_OF_COINS];
+	for (int i = 0; i < NUMBER_OF_COINS; i++)
+	{
+		x = rand() % MSZ;
+		y = rand() % MSZ;
+		coins[i] = new Point2D(x, y);
+		maze[y][x] = COIN;
+	}
+	pacman->setCoins(NUMBER_OF_COINS, coins)*/;
+
 }
 
 void UpdateSecurityMap()
@@ -60,22 +82,22 @@ void UpdateSecurityMap()
 
 	for (i = 0; i < num_grenades; i++)
 	{
-//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
+		//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
 		x = 2 * (rand() % MSZ) / (double)MSZ - 1;
 		y = 2 * (rand() % MSZ) / (double)MSZ - 1;
-	
-		Grenade* p = new Grenade(x,y); 
 
-		p->UpdateSecurityMap(maze,security_map);
+		Grenade* p = new Grenade(x, y);
 
-//		delete p;
+		p->UpdateSecurityMap(maze, security_map);
+
+		//		delete p;
 	}
 
 }
 
 double Distance(int x1, int y1, int x2, int y2)
 {
-	return sqrt(pow((x1-x2),2)+pow(y1-y2,2));
+	return sqrt(pow((x1 - x2), 2) + pow(y1 - y2, 2));
 }
 
 void UpdatePQ(priority_queue <Node*, vector<Node*>, CompareNodes>& pq, Node* pn)
@@ -84,7 +106,7 @@ void UpdatePQ(priority_queue <Node*, vector<Node*>, CompareNodes>& pq, Node* pn)
 	Node* ptmp;
 	vector <Node*> tmp_v;
 
-	while (!pq.empty()&&!found)
+	while (!pq.empty() && !found)
 	{
 		ptmp = pq.top();
 		pq.pop();
@@ -106,7 +128,7 @@ void UpdatePQ(priority_queue <Node*, vector<Node*>, CompareNodes>& pq, Node* pn)
 }
 
 void 	AddNeighbor(Node* pCurrent, int direction,
-	priority_queue <Node*, vector<Node*>, CompareNodes>& pq, vector <Node> &gray, vector <Node> &black,
+	priority_queue <Node*, vector<Node*>, CompareNodes>& pq, vector <Node>& gray, vector <Node>& black,
 	int target_index)
 {
 	int i, j;
@@ -127,7 +149,7 @@ void 	AddNeighbor(Node* pCurrent, int direction,
 		break;
 	case LEFT:
 		i = pCurrent->GetRow();
-		j = pCurrent->GetCol()-1;
+		j = pCurrent->GetCol() - 1;
 		break;
 	case RIGHT:
 		i = pCurrent->GetRow();
@@ -139,14 +161,14 @@ void 	AddNeighbor(Node* pCurrent, int direction,
 		g = pCurrent->GetG() + WALL_COST;
 	else // SPACE or TARGET
 		g = pCurrent->GetG() + SPACE_COST;
-/*	n = current; // this is the neighbor of pCurrent
-	n.SetCol(j);
-	n.SetRow(i);
-	n.SetG(g);
-	n.SetH(h);
-	n.ComputeF();
-	n.SetParent(&current);
-	*/
+	/*	n = current; // this is the neighbor of pCurrent
+		n.SetCol(j);
+		n.SetRow(i);
+		n.SetG(g);
+		n.SetH(h);
+		n.ComputeF();
+		n.SetParent(&current);
+		*/
 	pn = new Node(i, j, pCurrent, g, h);
 	// Let's check the color of neighbor
 	it_black = find(black.begin(), black.end(), *pn); // Now we see that we really need operator ==
@@ -182,14 +204,14 @@ void 	AddNeighbor(Node* pCurrent, int direction,
 
 void RestorePath(Node* pCurrent)
 {
-	
-	while (maze[pCurrent->GetRow()][pCurrent->GetCol()]!=START)
+
+	while (maze[pCurrent->GetRow()][pCurrent->GetCol()] != START)
 	{
 		maze[pCurrent->GetRow()][pCurrent->GetCol()] = SPACE;
 		pCurrent = pCurrent->GetParent();
 	}
 	maze[pCurrent->GetRow()][pCurrent->GetCol()] = SPACE;
-	
+
 }
 
 
@@ -202,7 +224,7 @@ void DigPath(int index1, int index2)
 	vector<Node>::iterator it_gray;
 	vector<Node>::iterator it_black;
 
-	int is, js,it,jt;
+	int is, js, it, jt;
 	Node* pn;
 	Node* pCurrent;
 	is = rooms[index1].GetCenterY();
@@ -214,7 +236,7 @@ void DigPath(int index1, int index2)
 	// 2. set center of rooms[index2] as TARGET
 	maze[it][jt] = TARGET;
 	// 3. add start to PQ and to Grays 
-	pn = new Node(is, js, nullptr, 0, Distance(js,is,jt,it));
+	pn = new Node(is, js, nullptr, 0, Distance(js, is, jt, it));
 	pq.push(pn);
 	gray.push_back(*pn);
 	// 4. while PQ is not empty
@@ -226,8 +248,8 @@ void DigPath(int index1, int index2)
 		// 4.2 if it is TARGET, the best path has been found
 		if (maze[pCurrent->GetRow()][pCurrent->GetCol()] == TARGET)
 		{
-//			maze[current.GetRow()][current.GetCol()] = SPACE;
-			// 4.2.1 Restore path by combining digging (through walls) and moving (through spaces)
+			//			maze[current.GetRow()][current.GetCol()] = SPACE;
+						// 4.2.1 Restore path by combining digging (through walls) and moving (through spaces)
 			RestorePath(pCurrent);
 			return; // 
 		}
@@ -239,15 +261,15 @@ void DigPath(int index1, int index2)
 			it_gray = find(gray.begin(), gray.end(), *pCurrent); // based on operator == if we compare objects
 			if (it_gray != gray.end()) // if it was found
 				gray.erase(it_gray);
-		// 4.3 Add neighbors of pCurrent to PQ and return to 4.
-			// check top neighbor
+			// 4.3 Add neighbors of pCurrent to PQ and return to 4.
+				// check top neighbor
 			if (pCurrent->GetRow() + 1 < MSZ)
 				AddNeighbor(pCurrent, TOP, pq, gray, black, index2);
 			// check bottom neighbor
-			if(pCurrent->GetRow()-1>=0)
+			if (pCurrent->GetRow() - 1 >= 0)
 				AddNeighbor(pCurrent, BOTTOM, pq, gray, black, index2);
 			// check left neighbor
-			if(pCurrent->GetCol()-1>=0)
+			if (pCurrent->GetCol() - 1 >= 0)
 				AddNeighbor(pCurrent, LEFT, pq, gray, black, index2);
 			// check right neighbor
 			if (pCurrent->GetCol() + 1 < MSZ)
@@ -271,14 +293,19 @@ void DigPathes()
 
 void SetupMaze()
 {
-	int i, j,k;
+	int i, j, k;
 	int countRoom;
-	int w, h,cx,cy;
+	int w, h, cx, cy;
 	// set borders
+	int healthStorage = 0;
+	int ammoStorage = 0;
 
-	for (i = 0; i < MSZ; i++)
-		for (j = 0;j < MSZ; j++)
-		maze[i][j] = WALL;
+	for (i = 0; i < MSZ; i++) {
+		for (j = 0; j < MSZ; j++) {
+			maze[i][j] = WALL;
+		}
+	}
+
 
 	for (countRoom = 0; countRoom < NUM_ROOMS; countRoom++)
 	{
@@ -310,18 +337,28 @@ void SetupMaze()
 	DigPathes();
 }
 
-void DrawMaze() 
+set<int> randomTwoRoomsNums() {
+	std::set<int> roomsToStorage;
+	do {
+		int roomNum = rand() % NUM_ROOMS;
+		roomsToStorage.insert(roomNum);
+	} while (roomsToStorage.size() < 2);
+	return roomsToStorage;
+
+}
+
+void DrawMaze()
 {
 	int i, j;
-	double dx, dy, x,y;
+	double dx, dy, x, y;
 
 	dx = dy = 2.0 / MSZ; // 2.0 is the logical width and height of the window
 
 	y = -1;
-	for (i = 0; i < MSZ; i++,y+=dy)
+	for (i = 0; i < MSZ; i++, y += dy)
 	{
 		x = -1;
-		for (j = 0; j < MSZ; j++,x+=dx)
+		for (j = 0; j < MSZ; j++, x += dx)
 		{
 			switch (maze[i][j]) {
 			case WALL:
@@ -346,6 +383,15 @@ void DrawMaze()
 			case PATH:
 				glColor3d(1, 0.5, 1);
 				break;
+			case HEALTH_STORAGE:
+				glColor3d(1, 0.5, 0);
+				break;
+			case AMMO_STORAGE:
+				glColor3d(0, 0, 0);
+				break;
+			case PLAYER:
+				glColor3d(1, 0, 1);
+				break;
 
 
 
@@ -353,9 +399,9 @@ void DrawMaze()
 			// draw one square in maze
 			glBegin(GL_POLYGON);
 			glVertex2d(x, y);
-			glVertex2d(x, y+dy);
-			glVertex2d(x+dx, y+dy);
-			glVertex2d(x+dx, y);
+			glVertex2d(x, y + dy);
+			glVertex2d(x + dx, y + dy);
+			glVertex2d(x + dx, y);
 			glEnd();
 		}
 	}
@@ -455,7 +501,7 @@ void display()
 	DrawMaze();
 	if (pg != nullptr)
 		pg->Draw();
-	
+
 	glutSwapBuffers(); // show all
 }
 
@@ -464,7 +510,7 @@ void idle()
 	//if (pb != nullptr && pb->GetIsMoving())
 	//	pb->Move(maze);
 
-	if (pg != nullptr )
+	if (pg != nullptr)
 		pg->Move(maze); // move all bullets of grenade
 
 //	if (start_BFS)
@@ -505,6 +551,43 @@ void mouse(int button, int state, int x, int y)
 
 		// pb = new Bullet(bx, by, false, dx, dy);
 		pg = new Grenade(bx, by);
+	}
+}
+
+void initTwoPlayers() {
+	std::set<int> randomTwoRooms = randomTwoRoomsNums();
+	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++){
+		Point2D* playersPos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		playersPos = new Point2D(room.GetCenterX(), room.GetCenterY());
+		Player *player = new Player(playersPos);
+		maze[playersPos->getY()][playersPos->getX()] = PLAYER;
+		//players.insert(*player); 
+	}
+}
+
+void initStorages() {
+	std::set<int> randomTwoRoomsForHealthStorage = randomTwoRoomsNums();
+
+	for (auto it = randomTwoRoomsForHealthStorage.begin(); it != randomTwoRoomsForHealthStorage.end(); it++) {
+		Point2D* healthStoragePos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		int xPos = room.GetCenterX() + abs(room.GetWidth() / 3);
+		int yPos = room.GetCenterY() + abs(room.GetHeight() / 3);
+		healthStoragePos = new Point2D(xPos, yPos);
+		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
+	}
+	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
+	for (auto it = randomTwoRoomsForAmmoStorage.begin(); it != randomTwoRoomsForAmmoStorage.end(); it++) {
+		Point2D* healthStoragePos;
+		int roomNum = *it;
+		Room room = rooms[roomNum];
+		int xPos = room.GetCenterX() - abs(room.GetWidth() / 3);
+		int yPos = room.GetCenterY() - abs(room.GetHeight() / 3);
+		healthStoragePos = new Point2D(xPos, yPos);
+		maze[healthStoragePos->getY()][healthStoragePos->getX()] = AMMO_STORAGE;
 	}
 }
 

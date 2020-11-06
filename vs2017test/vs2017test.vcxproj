@@ -118,19 +118,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="CompareNodes.cpp" />
+    <ClCompile Include="ComparePoints.cpp" />
     <ClCompile Include="Grenade.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Point2D.cpp" />
+    <ClCompile Include="Point2D_hg.cpp" />
     <ClCompile Include="Room.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="CompareNodes.h" />
+    <ClInclude Include="ComparePoints.h" />
+    <ClInclude Include="Const.h" />
     <ClInclude Include="glut.h" />
     <ClInclude Include="Grenade.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Point2D.h" />
+    <ClInclude Include="Point2D_hg.h" />
     <ClInclude Include="Room.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
