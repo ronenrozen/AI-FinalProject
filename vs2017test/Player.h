@@ -10,6 +10,10 @@ class Player
 {
 public:
 	Player(Point2D* pos);
+	void decreaseHealth();
+	void refillHealth();
+	void decreaseAmmo();
+	void refillAmmo();
 	/*~Player();
 	void Player::setMonsters(int numberOfMonster, Point2D**& monsters);
 	void Player::setCoins(int numberOfCoins, Point2D**& coins);
@@ -18,7 +22,8 @@ private:
 	//bool win;
 
 	Point2D* pos;
-
+	int health;
+	int ammo;
 	/*vector<Point2D> coins;
 	vector<AStar*> aStarCoins;
 	Point2D* lastPosCoin;

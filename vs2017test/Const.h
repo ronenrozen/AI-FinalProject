@@ -3,7 +3,7 @@ const int W = 600; // window width
 const int H = 600; // window height
 
 const int NUM_ROOMS = 12;
-
+const int MAX_OBJECTS = 2;
 const int TOP = 1;
 const int BOTTOM = 2;
 const int LEFT = 3;
@@ -14,6 +14,9 @@ const double WALL_COST = 2;
 
 const int MAX_STORAGE = 2; 
 const int MAX_PLAYERS = 2;
+const int MAX_GROUPS = 2;
+const int MAX_PLAYERS_IN_GROUP = 2;
+
 const int MSZ = 100;
 const int WALL = 1;
 const int SPACE = 2;
@@ -26,3 +29,5 @@ const int HEALTH_STORAGE = 9;
 const int AMMO_STORAGE = 10;
 const int PLAYER1 = 11;
 const int PLAYER2 = 12;
+const int OBJECT = 13;
+

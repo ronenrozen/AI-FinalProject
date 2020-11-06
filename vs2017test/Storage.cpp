@@ -6,12 +6,24 @@ Storage::Storage(Point2D* pos)
 	this->capacity = 100;
 }
 
-void Storage::refill()
+void Storage::refillHealth(Player p)
 {
-	this->capacity = 100;
+	p.refillHealth();
 }
 
-void Storage::decrease()
+void Storage::refillAmmo(Player p)
 {
-	this->capacity--;
+	p.refillAmmo();
 }
+
+void Storage::decreaseHealth(Player p)
+{
+	p.decreaseHealth();
+}
+
+void Storage::decreaseAmmo(Player p)
+{
+	p.decreaseAmmo();
+}
+
+

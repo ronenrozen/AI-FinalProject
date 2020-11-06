@@ -37,6 +37,11 @@ void Room::SetHeight(int h)
 	height = h;
 }
 
+void Room::SetObjects(std::vector<Point2D> o)
+{
+	objects = o;
+}
+
 int Room::GetCenterX()
 {
 	return cx;
@@ -55,6 +60,11 @@ int Room::GetWidth()
 int Room::GetHeight()
 {
 	return height;
+}
+
+std::vector<Point2D> Room::GetObjects()
+{
+	return this->objects;
 }
 
 void Room::Init(int m[MSZ][MSZ])

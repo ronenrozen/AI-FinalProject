@@ -6,7 +6,29 @@ extern bool done;
 Player::Player(Point2D* pos)
 {
 	this->pos = pos;
+	this->health = 100;
+	this->ammo = 100;
 
+}
+
+void Player::decreaseHealth()
+{
+	this->health--;
+}
+
+void Player::refillHealth()
+{
+	this->health = 100;
+}
+
+void Player::decreaseAmmo()
+{
+	this->ammo--;
+}
+
+void Player::refillAmmo()
+{
+	this->ammo = 100;
 }
 
 

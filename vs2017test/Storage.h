@@ -3,13 +3,16 @@
 
 #pragma once
 #include "Point2D.h"
-
+#include "Player.h"
 class Storage
 {
 public:
 	Storage(Point2D* pos);
-	void refill();
-	void decrease();
+	void refillHealth(Player p);
+	void refillAmmo(Player p);
+	void decreaseHealth(Player p);
+	void decreaseAmmo(Player p);
+
 	/*~Player();
 	void Player::setMonsters(int numberOfMonster, Point2D**& monsters);
 	void Player::setCoins(int numberOfCoins, Point2D**& coins);

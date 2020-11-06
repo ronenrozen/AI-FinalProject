@@ -22,7 +22,8 @@ int maze[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
-std::vector<Player> players;
+std::vector<Player> groupA;
+std::vector<Player> groupB;
 std::vector<Storage> ammoStorages;
 std::vector<Storage> healthStorages;
 bool start_BFS = false;
@@ -35,6 +36,7 @@ Point2D** storages;
 void SetupMaze();
 void initTwoPlayers();
 void initStorages();
+void initObjects();
 void init()
 {
 	//    RED, GREEN, BLUE
@@ -48,7 +50,7 @@ void init()
 
 	initTwoPlayers();
 	initStorages();
-
+	initObjects();
 	/*monster = new Monster * [NUMBER_OF_MONSTER];
 	Point2D** pos;
 	pos = new Point2D * [NUMBER_OF_MONSTER];
@@ -339,16 +341,6 @@ void SetupMaze()
 	DigPathes();
 }
 
-set<int> randomTwoRoomsNums() {
-	std::set<int> roomsToStorage;
-	do {
-		int roomNum = rand() % NUM_ROOMS;
-		roomsToStorage.insert(roomNum);
-	} while (roomsToStorage.size() < 2);
-	return roomsToStorage;
-
-}
-
 void DrawMaze()
 {
 	int i, j;
@@ -397,7 +389,9 @@ void DrawMaze()
 			case PLAYER2:
 				glColor3d(0, 1, 0);
 				break;
-
+			case OBJECT:
+				glColor3d(0.4, 0, 0);
+				break;
 
 
 			}// switch
@@ -559,18 +553,56 @@ void mouse(int button, int state, int x, int y)
 	}
 }
 
+set<int> randomTwoRoomsNums() {
+	std::set<int> roomsToStorage;
+	do {
+		int roomNum = rand() % NUM_ROOMS;
+		roomsToStorage.insert(roomNum);
+	} while (roomsToStorage.size() < 2);
+	return roomsToStorage;
+
+}
+
+Point2D* getPoint(Room room) {
+	bool isFound = false;
+	Point2D* pos;
+	do {
+		int randX = (rand() % abs(room.GetWidth() / 2));
+		int randY = (rand() % abs(room.GetHeight() / 2));
+		pos = new Point2D(room.GetCenterX() - randX, room.GetCenterY() + randY);
+		if (maze[pos->getY()][pos->getX()] == SPACE)
+			isFound = true;
+	} while (!isFound);
+	return pos;
+}
+
+//void initTwoPlayers() {
+//	int count = 11;
+//	std::set<int> randomTwoRooms = randomTwoRoomsNums();
+//	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++) {
+//		int roomNum = *it;
+//		for ()
+//		Room room = rooms[roomNum];
+//		Point2D* playersPos = getPoint(room);
+//		playersPos = new Point2D(room.GetCenterX(), room.GetCenterY());
+//		Player* player = new Player(playersPos);
+//		maze[playersPos->getY()][playersPos->getX()] = count;
+//		count++;
+//		players.push_back(*player);
+//	}
+//}
+
 void initTwoPlayers() {
 	int count = 11;
 	std::set<int> randomTwoRooms = randomTwoRoomsNums();
-	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++){
-		Point2D* playersPos;
-		int roomNum = *it;
-		Room room = rooms[roomNum];
-		playersPos = new Point2D(room.GetCenterX(), room.GetCenterY());
-		Player *player = new Player(playersPos);
-		maze[playersPos->getY()][playersPos->getX()] = count;
-		count++;
-		players.push_back(*player); 
+	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++, count++) {
+		Room room = rooms[*it];
+		for (int i = 0; i < MAX_PLAYERS_IN_GROUP; i++) {
+			Point2D* playersPos = getPoint(room);
+			Player* player = new Player(playersPos);
+			maze[playersPos->getY()][playersPos->getX()] = count;
+			count == 11 ? groupA.push_back(*player) : groupB.push_back(*player);
+		}		
 	}
 }
 
@@ -578,27 +610,37 @@ void initStorages() {
 	std::set<int> randomTwoRoomsForHealthStorage = randomTwoRoomsNums();
 
 	for (auto it = randomTwoRoomsForHealthStorage.begin(); it != randomTwoRoomsForHealthStorage.end(); it++) {
-		Point2D* healthStoragePos;
-		int roomNum = *it;
-		Room room = rooms[roomNum];
-		int xPos = room.GetCenterX() + abs(room.GetWidth() / 3);
-		int yPos = room.GetCenterY() + abs(room.GetHeight() / 3);
-		healthStoragePos = new Point2D(xPos, yPos);
-		Storage *healthStorage = new Storage(healthStoragePos);
+		Room room = rooms[*it];
+		Point2D* healthStoragePos = getPoint(room);
+		Storage* healthStorage = new Storage(healthStoragePos);
 		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
 		healthStorages.push_back(*healthStorage);
 	}
 	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
 	for (auto it = randomTwoRoomsForAmmoStorage.begin(); it != randomTwoRoomsForAmmoStorage.end(); it++) {
-		Point2D* ammoStoragePos;
-		int roomNum = *it;
-		Room room = rooms[roomNum];
-		int xPos = room.GetCenterX() - abs(room.GetWidth() / 3);
-		int yPos = room.GetCenterY() - abs(room.GetHeight() / 3);
-		ammoStoragePos = new Point2D(xPos, yPos);
-		Storage *ammoStorage = new Storage(ammoStoragePos);
+		
+		Room room = rooms[*it];
+		Point2D* ammoStoragePos = getPoint(room);
+		Storage* ammoStorage = new Storage(ammoStoragePos);
 		maze[ammoStoragePos->getY()][ammoStoragePos->getX()] = AMMO_STORAGE;
 		ammoStorages.push_back(*ammoStorage);
+	}
+}
+
+
+void initObjects() {
+	int count = 0;
+	for (int countRoom = 0; countRoom < NUM_ROOMS; countRoom++) {
+		std::vector<Point2D> objects;
+		Room room = rooms[countRoom];
+		do {
+			Point2D* pos = getPoint(room);
+			maze[pos->getY()][pos->getX()] = OBJECT;
+			objects.push_back(*pos);
+			count++;
+		} while (count < MAX_OBJECTS);
+		room.SetObjects(objects);
+		count = 0;
 	}
 }
 
@@ -616,9 +658,10 @@ void main(int argc, char* argv[])
 	glutMouseFunc(mouse);
 
 	glutCreateMenu(menu);
-	glutAddMenuEntry("Shoot Bullet", 1);
-	glutAddMenuEntry("Throw Grenade", 2);
-	glutAddMenuEntry("Update Security Map", 3);
+	glutAddMenuEntry("Play", 1);
+	//glutAddMenuEntry("Shoot Bullet", 1);
+	//glutAddMenuEntry("Throw Grenade", 2);
+	//glutAddMenuEntry("Update Security Map", 3);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();
