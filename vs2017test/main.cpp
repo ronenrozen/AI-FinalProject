@@ -19,13 +19,14 @@ using namespace std;
 
 
 int maze[MSZ][MSZ];
+int roomMat[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
 std::vector<Player> groupA;
 std::vector<Player> groupB;
-std::vector<Storage> ammoStorages;
-std::vector<Storage> healthStorages;
+std::vector<Target> ammoStorages;
+std::vector<Target> healthStorages;
 bool start_BFS = false;
 
 
@@ -78,24 +79,30 @@ void init()
 
 }
 
-void UpdateSecurityMap()
+void UpdateSecurityMap(std::vector<Player> B)
 {
-	int num_grenades = 5000;
-	int i;
-	double x, y;
-
-	for (i = 0; i < num_grenades; i++)
+	security_map[MSZ][MSZ] = { 0 };
+	for (std::vector<Player>::iterator it = B.begin(); it != B.end(); ++it)
 	{
-		//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
-		x = 2 * (rand() % MSZ) / (double)MSZ - 1;
-		y = 2 * (rand() % MSZ) / (double)MSZ - 1;
-
-		Grenade* p = new Grenade(x, y);
-
-		p->UpdateSecurityMap(maze, security_map);
-
-		//		delete p;
+		it->simulateShoot(security_map);
 	}
+	//to do
+	//int num_grenades = 5000;
+	//int i;
+	//double x, y;
+
+	//for (i = 0; i < num_grenades; i++)
+	//{
+	//	//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
+	//	x = 2 * (rand() % MSZ) / (double)MSZ - 1;
+	//	y = 2 * (rand() % MSZ) / (double)MSZ - 1;
+
+	//	Grenade* p = new Grenade(x, y);
+
+	//	p->UpdateSecurityMap(maze, security_map);
+
+	//	//		delete p;
+	//}
 
 }
 
@@ -208,9 +215,26 @@ void 	AddNeighbor(Node* pCurrent, int direction,
 
 void RestorePath(Node* pCurrent)
 {
-
+	bool door = true;
+	Node* lastParrent = pCurrent;
 	while (maze[pCurrent->GetRow()][pCurrent->GetCol()] != START)
 	{
+		if (maze[pCurrent->GetRow()][pCurrent->GetCol()] == WALL)
+		{
+			if (door)
+			{
+				
+				roomMat[pCurrent->GetRow()][pCurrent->GetCol()] = -2;
+				door = false;
+			}
+		}
+		else {
+			if (!door)
+			{
+				roomMat[lastParrent->GetRow()][lastParrent->GetCol()] = -2;
+				door = true;
+			}
+		}
 		maze[pCurrent->GetRow()][pCurrent->GetCol()] = SPACE;
 		pCurrent = pCurrent->GetParent();
 	}
@@ -307,6 +331,7 @@ void SetupMaze()
 	for (i = 0; i < MSZ; i++) {
 		for (j = 0; j < MSZ; j++) {
 			maze[i][j] = WALL;
+			roomMat[i][j] = -1;
 		}
 	}
 
@@ -334,7 +359,7 @@ void SetupMaze()
 		rooms[countRoom].SetHeight(h);
 		rooms[countRoom].SetCenterX(cx);
 		rooms[countRoom].SetCenterY(cy);
-		rooms[countRoom].Init(maze);
+		rooms[countRoom].Init(maze,roomMat);
 	}
 
 	// now dig the pathes between each room
@@ -527,10 +552,6 @@ void menu(int choice)
 	{
 		pg->Explode();
 	}
-	else if (choice == 3)
-	{
-		UpdateSecurityMap();
-	}
 }
 
 // x, y are in pixels
@@ -599,11 +620,12 @@ void initTwoPlayers() {
 		Room room = rooms[*it];
 		for (int i = 0; i < MAX_PLAYERS_IN_GROUP; i++) {
 			Point2D* playersPos = getPoint(room);
-			Player* player = new Player(playersPos);
+			Player* player = new Player(playersPos,count,count+(1*((i+1)%2)-1*(i%2)));
 			maze[playersPos->getY()][playersPos->getX()] = count;
 			count == 11 ? groupA.push_back(*player) : groupB.push_back(*player);
 		}		
 	}
+
 }
 
 void initStorages() {
@@ -612,7 +634,7 @@ void initStorages() {
 	for (auto it = randomTwoRoomsForHealthStorage.begin(); it != randomTwoRoomsForHealthStorage.end(); it++) {
 		Room room = rooms[*it];
 		Point2D* healthStoragePos = getPoint(room);
-		Storage* healthStorage = new Storage(healthStoragePos);
+		Storage* healthStorage = new Storage(healthStoragePos, HEALTH_STORAGE);
 		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
 		healthStorages.push_back(*healthStorage);
 	}
@@ -621,7 +643,7 @@ void initStorages() {
 		
 		Room room = rooms[*it];
 		Point2D* ammoStoragePos = getPoint(room);
-		Storage* ammoStorage = new Storage(ammoStoragePos);
+		Storage* ammoStorage = new Storage(ammoStoragePos, AMMO_STORAGE);
 		maze[ammoStoragePos->getY()][ammoStoragePos->getX()] = AMMO_STORAGE;
 		ammoStorages.push_back(*ammoStorage);
 	}
@@ -643,7 +665,53 @@ void initObjects() {
 		count = 0;
 	}
 }
+void play(std::vector<Player> A, std::vector<Player> B)
+{
+	Player p1 = A.back();
+	p1.setOpponentsTeam(B);
+	A.pop_back();
+	UpdateSecurityMap(B);
+	Target target = chooseTarget(p1,B);
+	Point2D* nextStep = Astar(p1, target);
+	int currentRoom = roomMat[p1.getX][p1.getY];
+	if (currentRoom >= 0)
+	{
+		nextStep = rooms[currentRoom].aStar(maze, p1, target);
+	}
+	p1.mouve(nextStep);
+	if (nextStep->operator==( target));
+	{
+		action(currentRoom,p1,target);
 
+	}
+	A.push_back(p1);
+
+}
+Target chooseTarget(Player p1, std::vector<Player> B) {
+	if (p1.getHealth < 25)
+		return findMinTargetInVector(p1, healthStorages);
+	if (p1.getAmmo == 0);
+		return findMinTargetInVector(p1, ammoStorages);
+	return  findMinTargetInVector(p1, createTargetVectorFromPlayers(B));
+}
+Target findMinTargetInVector(Player p1, std::vector<Target> t)
+{
+	//find target with minimum distance from t
+}
+std::vector<Target>  createTargetVectorFromPlayers(std::vector<Player> B)
+{
+	//create vector<Target> fromm vector<Player>
+}
+void game() {
+	int mouves = 0;
+	while (!groupA.empty || !groupB.empty)
+	{
+		if (mouves % 2 == 0)
+			play(groupA, groupB);
+		else
+			play(groupB, groupA);
+	}
+}
 void main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
@@ -667,4 +735,122 @@ void main(int argc, char* argv[])
 	init();
 
 	glutMainLoop();
+}
+int getColor(Point2D& point) {
+	return maze[point.getY()][point.getX()];
+}
+int getRoom(Point2D* p) {
+	return roomMat[p->getX][p->getY];
+}
+Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom,int targetRoom)
+{
+	//TODO
+}
+Point2D* Astar(Point2D* pos,Point2D targetPoint, int roomMat[MSZ][MSZ], int maxG) {
+	Point2D lastPos = Point2D(*pos);
+	Point2D* last = NULL;
+	std::vector<Point2D_hg> solution;
+	if (maxG == -1 && getColor(targetPoint) == WALL)
+		return false;
+	if (last != NULL)
+	{
+		if (targetPoint == *last && *pos == lastPos)
+			return findRoomExit(solution,roomMat);
+		delete last;
+		solution.clear();
+	}
+	last = new Point2D(targetPoint);
+	Point2D_hg bestPoint;
+	int currentRoom = getRoom(pos);
+	priority_queue <Point2D_hg, vector <Point2D_hg>, ComparePoints> pq;
+	vector <Point2D_hg> black;
+	vector <Point2D_hg> gray;
+	bestPoint = Point2D_hg(*pos, targetPoint);
+	pq.emplace(bestPoint);
+	gray.push_back(bestPoint);
+	Point2D_hg* bestPointAsParent, neighborPos_hg;
+	Point2D bestPointPos, neighborPos;
+	vector<Point2D_hg>::iterator black_iterator;
+	vector<Point2D_hg>::iterator gray_iterator;
+	do {
+		if (pq.empty())
+			return false;
+		bestPoint = pq.top();
+		pq.pop();
+		gray_iterator = find(gray.begin(), gray.end(), bestPoint);
+		gray.erase(gray_iterator);
+		black.push_back(bestPoint);
+		bestPointAsParent = new Point2D_hg(bestPoint);
+		bestPointPos = bestPointAsParent->getPoint();
+		if (getRoom(&bestPointPos) == getRoom(&targetPoint) || maxG == bestPoint.getG()) {
+			while (bestPointAsParent->getParent() != NULL)
+			{
+				solution.push_back(*bestPointAsParent);
+				bestPointAsParent = bestPointAsParent->getParent();
+			}
+			return findRoomExit(solution,currentRoom,getRoom(&targetPoint));
+		}
+
+		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
+		if (getColor(neighborPos) ==SPACE) {
+			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
+			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
+			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
+			if (black_iterator == black.end() && gray_iterator == gray.end())
+			{
+				pq.emplace(neighborPos_hg);
+				gray.push_back(neighborPos_hg);
+			}
+		}
+
+		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
+		if (getColor(neighborPos) == SPACE) {
+			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
+			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
+			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
+			if (black_iterator == black.end() && gray_iterator == gray.end())
+			{
+				pq.emplace(neighborPos_hg);
+				gray.push_back(neighborPos_hg);
+			}
+		}
+
+		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
+		if (getColor(neighborPos) == SPACE) {
+			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
+			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
+			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
+			if (black_iterator == black.end() && gray_iterator == gray.end())
+			{
+				pq.emplace(neighborPos_hg);
+				gray.push_back(neighborPos_hg);
+			}
+		}
+
+		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
+		if (getColor(neighborPos) == SPACE) {
+			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
+			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
+			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
+			if (black_iterator == black.end() && gray_iterator == gray.end())
+			{
+				pq.emplace(neighborPos_hg);
+				gray.push_back(neighborPos_hg);
+			}
+		}
+	} while (true);
+	return false;
+}
+
+	
+
+void action(int roomIndex, Player p1, Target t)
+{
+	//todo
+	//if target.target==opposit team shoot target
+	//if target.target ==storage && p1==target refill
 }

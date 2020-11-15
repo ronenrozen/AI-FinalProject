@@ -2,18 +2,19 @@
 #define __POINT2D_HG__H
 #include "Point2D.h"
 #include <math.h>
+#include "Const.h"
 
 #pragma once
 
 #define WEIGHT 3
-
+#define ALPHA 1
 class Point2D_hg
 {
 public:
 	Point2D_hg();
 	~Point2D_hg();
 	Point2D_hg(Point2D& myPos, Point2D& targetPoint);
-	Point2D_hg(Point2D_hg* parent, Point2D& myPos, Point2D& targetPoint);
+	Point2D_hg(Point2D_hg* parent, Point2D& myPos, Point2D& targetPoint,int securityMap [MSZ][MSZ]);
 	Point2D getPoint();
 	bool operator==(const Point2D_hg& other);
 	int getH();

@@ -1,19 +1,26 @@
 #include "Player.h"
-
+#include "Const.h"
 extern int maze[MSZ][MSZ];
 extern bool done;
 
-Player::Player(Point2D* pos)
+Player::Player(Point2D* pos,int target, int otherPlayer):Target(pos->getX,pos->getY, target)
 {
-	this->pos = pos;
+	
+	bullet = new Bullet(double(x), double(y),false, 0.1, 0.1);
 	this->health = 100;
 	this->ammo = 100;
+	this->otherPlayer = otherPlayer;
 
 }
 
 void Player::decreaseHealth()
 {
 	this->health--;
+}
+
+void Player::decreaseHealth(int gap)
+{
+	health = health - gap;
 }
 
 void Player::refillHealth()
@@ -31,7 +38,113 @@ void Player::refillAmmo()
 	this->ammo = 100;
 }
 
+int Player::getHealth()
+{
+	return health;
+}
 
+int Player::getAmmo()
+{
+	return ammo;
+}
+
+void Player::mouve(Point2D* next)
+{
+	x = next->getX;
+	y = next->getY;
+}
+
+void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
+{
+	for (int i = 0; i < 360; i=i+20)
+	{
+		bullet->SetX = x;
+		bullet->SetY = y;
+		bullet->SetDirX(cos(i));
+		bullet->SetDirY(sin(i));
+		bullet->Shoot();
+		bool stop = false;
+		int row, col;
+		double delta = 50;
+		
+		while (!stop)
+		{
+			stop = true;
+			
+				if (bullet->GetIsMoving())
+				{
+					stop = false;
+					row = MSZ * (bullet->GetY() + 1) / 2;
+					col = MSZ * (bullet->GetX() + 1) / 2;
+					if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE)
+					{
+						securityMap[row][col] += delta;
+						bullet->Move(maze);
+						stop = true;
+					}
+					
+				}
+				delta--;
+		}
+	}
+}
+
+void Player::shoot(Target t, int maze[MSZ][MSZ])
+{
+	//if grnade is in range activate grnade 
+	bullet->SetX = x;
+	bullet->SetY = y;
+	double dx = t.getX - x;
+	double dy = t.getY - y;
+	double dis;//=sqrt(dx^2 +dy^2) TODO
+	double dirX = x / dis;
+	double dirY = y / dis;
+	bullet->SetDirX(dirX);
+	bullet->SetDirY(dirY);
+	bullet->Shoot();
+	bool stop = false;
+	bullet->Move(maze);
+	int row, col;
+	int power = 50;
+	while (!stop)
+	{
+		stop = true;
+
+		if (bullet->GetIsMoving())
+		{
+			
+			row = MSZ * (bullet->GetY() + 1) / 2;
+			col = MSZ * (bullet->GetX() + 1) / 2;
+			if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
+			{
+				if (maze[row][col] == SPACE)
+				{
+					bullet->Move(maze);
+					power = power - 1;//need to be checked
+					stop = false;
+				}
+				
+				if (maze[row][col] == otherPlayer)
+				{
+				//opponentPlater=opponentsTeam.find(player(row,col,otherPlayer color)
+					
+					//opponentPlater.increasHealth(power)
+					stop = false;
+				}
+				
+			}
+		
+		}
+
+	}
+}
+
+void Player::setOpponentsTeam(std::vector<Player> opponentsTeam)
+{
+	this->opponentsTeam = opponentsTeam;
+}
+
+//----------------------------------------------------------------------------old-code-----------------------------------------------------------------------------------------------------
 //Player::~Player()
 //{
 //	coins.clear();
