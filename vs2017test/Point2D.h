@@ -12,7 +12,7 @@ public:
 	int getY();
 	bool operator==(const Point2D& other);
 	void copy(const Point2D& other);
-private:
+protected:
 	int x;
 	int y;
 };

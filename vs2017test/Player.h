@@ -2,26 +2,32 @@
 #define __PLAYER_H
 #pragma once
 
-#include "Point2D.h"
 #include "AStar.h"
 #include <thread>
-
-class Player
+#include "Target.h"
+#include "Bullet.h"
+#include "Bullet.h"
+class Player: public Target
 {
 public:
-	Player(Point2D* pos);
+	Player(Point2D* pos,int targets);
 	void decreaseHealth();
 	void refillHealth();
 	void decreaseAmmo();
 	void refillAmmo();
+	int getHealth();
+	int getAmmo();
+	void mouve(Point2D* next);
+	void simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ]);
+	void shoot(Target t, int maze[MSZ][MSZ]);
 	/*~Player();
 	void Player::setMonsters(int numberOfMonster, Point2D**& monsters);
 	void Player::setCoins(int numberOfCoins, Point2D**& coins);
 	void run();*/
 private:
 	//bool win;
-
-	Point2D* pos;
+	Bullet* bullet;
+	
 	int health;
 	int ammo;
 	/*vector<Point2D> coins;

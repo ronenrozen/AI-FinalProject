@@ -7,15 +7,18 @@
 #include "Const.h"
 #include <vector>
 #include "Point2D.h"
+#include "Player.h"
 
 class Room
 {
 private:
-	int cx, cy, width, height;
+	int cx, cy, width, height,myIndex;
 	std::vector<Point2D> objects;
+	std::vector<Target> targets;
+   
 public:
 	Room();
-	Room(int row, int col, int w, int h);
+	Room(int row, int col, int w, int h,int index);
 	void SetCenterX(int col);
 	void SetCenterY(int row);
 	void SetWidth(int w);
@@ -27,8 +30,11 @@ public:
 	int GetWidth();
 	int GetHeight();
 	std::vector<Point2D> GetObjects();
-
-	void Init(int m[MSZ][MSZ]);
+	void addTarget(Target t);
+	bool ramoveTarget(Target t);
+	bool containsTarget(Target t);
+	Point2D* aStar(int m[MSZ][MSZ], Player p, Target t);
+	void Init(int m[MSZ][MSZ],int roomsMat[MSZ][MSZ]);
 	bool Overlap(int w, int h, int cx, int cy);
 
 
