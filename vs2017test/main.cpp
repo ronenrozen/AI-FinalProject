@@ -23,8 +23,8 @@ int roomMat[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
 
 Room rooms[NUM_ROOMS]; // runs default constructor
-std::vector<Player> groupA;
-std::vector<Player> groupB;
+std::list<Player> groupA;
+std::list<Player> groupB;
 std::vector<Target> ammoStorages;
 std::vector<Target> healthStorages;
 bool start_BFS = false;
@@ -79,7 +79,7 @@ void init()
 
 }
 
-void UpdateSecurityMap(std::vector<Player> B)
+void UpdateSecurityMap(std::list<Player> B)
 {
 	security_map[MSZ][MSZ] = { 0 };
 	for (std::vector<Player>::iterator it = B.begin(); it != B.end(); ++it)
@@ -665,14 +665,14 @@ void initObjects() {
 		count = 0;
 	}
 }
-void play(std::vector<Player> A, std::vector<Player> B)
+void play(std::list<Player>A, std::list<Player> B)
 {
-	Player p1 = A.back();
+	Player p1 = A.front();
 	p1.setOpponentsTeam(B);
 	A.pop_back();
 	UpdateSecurityMap(B);
 	Target target = chooseTarget(p1,B);
-	Point2D* nextStep = Astar(p1, target);
+	Point2D* nextStep = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(target.getX(), target.getY()),-1 );
 	int currentRoom = roomMat[p1.getX][p1.getY];
 	if (currentRoom >= 0)
 	{
@@ -687,7 +687,7 @@ void play(std::vector<Player> A, std::vector<Player> B)
 	A.push_back(p1);
 
 }
-Target chooseTarget(Player p1, std::vector<Player> B) {
+Target chooseTarget(Player p1, std::list<Player> B) {
 	if (p1.getHealth < 25)
 		return findMinTargetInVector(p1, healthStorages);
 	if (p1.getAmmo == 0);
@@ -698,7 +698,7 @@ Target findMinTargetInVector(Player p1, std::vector<Target> t)
 {
 	//find target with minimum distance from t
 }
-std::vector<Target>  createTargetVectorFromPlayers(std::vector<Player> B)
+std::vector<Target>  createTargetVectorFromPlayers(std::list<Player> B)
 {
 	//create vector<Target> fromm vector<Player>
 }
@@ -742,26 +742,36 @@ int getColor(Point2D& point) {
 int getRoom(Point2D* p) {
 	return roomMat[p->getX][p->getY];
 }
-Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom,int targetRoom)
+Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
 {
+	
+	while (!solution.empty)
+	{
+		Point2D_hg temp = solution.back();
+		solution.pop_back();
+		
+		if(getRoom(&temp.getPoint())==currentRoom)
+			return &temp.getPoint();
+	}
 	//TODO
 }
-Point2D* Astar(Point2D* pos,Point2D targetPoint, int roomMat[MSZ][MSZ], int maxG) {
+Point2D* Astar(Point2D* pos,Point2D targetPoint, int maxG) {
 	Point2D lastPos = Point2D(*pos);
 	Point2D* last = NULL;
+	int currentRoom = getRoom(pos);
 	std::vector<Point2D_hg> solution;
 	if (maxG == -1 && getColor(targetPoint) == WALL)
 		return false;
 	if (last != NULL)
 	{
 		if (targetPoint == *last && *pos == lastPos)
-			return findRoomExit(solution,roomMat);
+			return findRoomExit(solution, currentRoom);
 		delete last;
 		solution.clear();
 	}
 	last = new Point2D(targetPoint);
 	Point2D_hg bestPoint;
-	int currentRoom = getRoom(pos);
+	
 	priority_queue <Point2D_hg, vector <Point2D_hg>, ComparePoints> pq;
 	vector <Point2D_hg> black;
 	vector <Point2D_hg> gray;
@@ -788,7 +798,7 @@ Point2D* Astar(Point2D* pos,Point2D targetPoint, int roomMat[MSZ][MSZ], int maxG
 				solution.push_back(*bestPointAsParent);
 				bestPointAsParent = bestPointAsParent->getParent();
 			}
-			return findRoomExit(solution,currentRoom,getRoom(&targetPoint));
+			return findRoomExit(solution,currentRoom);
 		}
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());

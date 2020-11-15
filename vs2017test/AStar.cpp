@@ -1,7 +1,7 @@
 #include "AStar.h"
 using namespace std;
 
-extern int maze[MSZ][MSZ];
+
 
 AStar::AStar(Point2D*& pos)
 {
@@ -20,7 +20,7 @@ int AStar::getColor(Point2D& point) {
 	return maze[point.getY()][point.getX()];
 }
 
-bool AStar::run(Point2D targetPoint, int maxG) {
+bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],int securityMap[MSZ][MSZ],int maxG) {
 	if (maxG == -1 && getColor(targetPoint) == WALL)
 		return false;
 	if (last != NULL)
@@ -63,7 +63,8 @@ bool AStar::run(Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
 		if (getColor(neighborPos) != WALL) {
-			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint);
+			int g = bestPointAsParent->getG + securityMap[neighborPos.getX][neighborPos.getY]*ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint,g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
 			if (black_iterator == black.end() && gray_iterator == gray.end())
@@ -75,7 +76,8 @@ bool AStar::run(Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
 		if (getColor(neighborPos) != WALL) {
-			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint);
+			int g = bestPointAsParent->getG + securityMap[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
 			if (black_iterator == black.end() && gray_iterator == gray.end())
@@ -87,7 +89,8 @@ bool AStar::run(Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
 		if (getColor(neighborPos) != WALL) {
-			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint);
+			int g = bestPointAsParent->getG + securityMap[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
 			if (black_iterator == black.end() && gray_iterator == gray.end())
@@ -99,7 +102,8 @@ bool AStar::run(Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
 		if (getColor(neighborPos) != WALL) {
-			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint);
+			int g = bestPointAsParent->getG + securityMap[neighborPos.getX][neighborPos.getY] * ALPHA;
+			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
 			if (black_iterator == black.end() && gray_iterator == gray.end())
@@ -118,6 +122,18 @@ Point2D* AStar::getTop()
 	{
 		Point2D_hg best = solution.back();
 		solution.pop_back();
+		lastPos = Point2D(best.getPoint());
+		return new Point2D(lastPos);
+	}
+	return NULL;
+}
+
+Point2D* AStar::getButtom()
+{
+	if (!solution.empty())
+	{
+		Point2D_hg best = solution.front();
+		solution.pop_front();
 		lastPos = Point2D(best.getPoint());
 		return new Point2D(lastPos);
 	}

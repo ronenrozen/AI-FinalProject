@@ -68,6 +68,37 @@ std::vector<Point2D> Room::GetObjects()
 	return this->objects;
 }
 
+void Room::addTarget(Target t)
+{
+	targets.push_back(t);
+}
+
+bool Room::ramoveTarget(Target t)
+{
+	
+	//erase target from TARGETS VECTOR
+}
+
+bool Room::containsTarget(Target t)
+{
+	//find target in targets vector
+}
+
+Point2D* Room::aStar(int m[MSZ][MSZ], int securityMap[MSZ][MSZ], Player p, Target t)
+{
+	Point2D* init = new Point2D(p.getX(), p.getY());
+	Point2D* temp,lastTemp;
+	AStar* roomA = new AStar(init);
+	bool ans=roomA->run(Point2D(t.getX(), t.getY()), m, securityMap);
+	if (ans)
+	{
+		
+		return roomA->getTop();//needs to be checked
+	}
+}
+
+
+
 void Room::Init(int m[MSZ][MSZ], int roomsMat[MSZ][MSZ])
 {
 	int i, j;
