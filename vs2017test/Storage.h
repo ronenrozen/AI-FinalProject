@@ -2,12 +2,13 @@
 #define __STORAGE_H
 
 #pragma once
-#include "Point2D.h"
+
 #include "Player.h"
-class Storage
+
+class Storage: public Target
 {
 public:
-	Storage(Point2D* pos);
+	Storage(Point2D* pos,int target);
 	void refillHealth(Player p);
 	void refillAmmo(Player p);
 	void decreaseHealth(Player p);
@@ -18,7 +19,7 @@ public:
 	void Player::setCoins(int numberOfCoins, Point2D**& coins);
 	void run();*/
 private:
-	Point2D* pos;
+	
 	int capacity;
 	/*vector<Point2D> coins;
 	vector<AStar*> aStarCoins;

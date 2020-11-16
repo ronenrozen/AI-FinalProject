@@ -676,7 +676,7 @@ void play(std::list<Player>A, std::list<Player> B)
 	int currentRoom = roomMat[p1.getX][p1.getY];
 	if (currentRoom >= 0)
 	{
-		nextStep = rooms[currentRoom].aStar(maze, p1, target);
+		nextStep = rooms[currentRoom].aStar(maze,security_map, p1, target);
 	}
 	p1.mouve(nextStep);
 	if (nextStep->operator==( target));

@@ -130,6 +130,7 @@
     <ClCompile Include="Point2D_hg.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Storage.cpp" />
+    <ClCompile Include="Target.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AStar.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Point2D_hg.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Storage.h" />
+    <ClInclude Include="Target.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -84,7 +84,7 @@ void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
 					}
 					
 				}
-				delta--;
+				delta--;//need to be checeked
 		}
 	}
 }
@@ -139,7 +139,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 	}
 }
 
-void Player::setOpponentsTeam(std::vector<Player> opponentsTeam)
+void Player::setOpponentsTeam(std::list<Player> opponentsTeam)
 {
 	this->opponentsTeam = opponentsTeam;
 }
