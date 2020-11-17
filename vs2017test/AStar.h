@@ -9,20 +9,23 @@
 #include "ComparePoints.h"
 #include <vector>
 #include <queue>
+#include <list>
 
 class AStar
 {
 public:
 	AStar(Point2D*& pos);
 	~AStar();
-	bool run(Point2D targetPoint, int securityMap[MSZ][MSZ],int maxG = -1);
+	bool run(Point2D targetPoint,  int maze[MSZ][MSZ], int securityMap[MSZ][MSZ],int maxG = -1);
 	Point2D* getTop();
+	Point2D* getButtom();
 	int getLen();
 private:
-	std::vector<Point2D_hg> solution;
+	std::list<Point2D_hg> solution;
 	Point2D* last;
 	Point2D* pos;
 	Point2D lastPos;
 	int getColor(Point2D& point);
+	int maze[MSZ][MSZ];
 };
 #endif __ASTAR_H
