@@ -823,11 +823,6 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 	return false;
 }
 
-
-bool isStorage(Point2D* pos) {
-	return  isHealthStorage || isAmmoStorage;
-}
-
 bool isHealthStorage(Point2D* pos) {
 	return maze[pos->getY()][pos->getX()] == HEALTH_STORAGE;
 }
@@ -836,16 +831,17 @@ bool isAmmoStorage(Point2D* pos) {
 	return maze[pos->getY()][pos->getX()] == AMMO_STORAGE;
 }
 
-bool isTargetAnopponentPlayer(bool isGroupA, Target t) {
-	std::list<Player> opponentGroup = isGroupA ? groupA : groupB;
-	Player* opponent = NULL;
-	for (auto it = opponentGroup.begin(); it != opponentGroup.end(); it++) {
-		Player* temp = opponentGroup[*it];
-		if (temp->getX() == t.getX() && temp->getY() == t.getY()) {
-			opponent = temp;
-		}
+bool isStorage(Point2D* pos) {
+	return  isHealthStorage || isAmmoStorage;
+}
+
+bool isTargetAnopponentPlayer(Player p, Target t) {
+	int pColor = maze[p.getY()][p.getX()];
+	int tColor = maze[t.getY()][t.getX()];
+	if (tColor != pColor && (tColor == PLAYER1 || tColor == PLAYER2)) {
+		return true;
 	}
-	return opponent != NULL ? true : false;
+	return false;
 }
 
 void action(int roomIndex, Player p1, Target t)
@@ -853,11 +849,12 @@ void action(int roomIndex, Player p1, Target t)
 	//todo
 	//if target.target==opposit team shoot target
 	//if target.target ==storage && p1==target refill
-	Point2D* targetPos = new Point2D(t.getX(), t.getY());
-	bool isGroupA = (std::find(groupA.begin(), groupA.end(), p1) != groupA.end());
-	if (isTargetAnopponentPlayer(isGroupA, t)) {
+
+	if (isTargetAnopponentPlayer(p1, t)) {
 		p1.shoot(t,maze);
 	}
+
+	Point2D* targetPos = new Point2D(t.getX(), t.getY());
 
 	if (isStorage(targetPos) && p1 == t) {
 		if (isHealthStorage) {
