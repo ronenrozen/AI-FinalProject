@@ -550,7 +550,7 @@ void play(std::list<Player>A, std::list<Player> B)
 		}
 	}
 	Point2D* targetPoint = new Point2D(currentTarget->getX(), currentTarget->getY());
-	if (nextStep->operator==*targetPoint)
+	if (*nextStep==*targetPoint)
 	{
 		action(currentRoom, p1, *currentTarget);
 
@@ -643,7 +643,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 	int currentRoom = getRoom(pos);
 	std::vector<Point2D_hg> solution;
 	if (maxG == -1 && getColor(targetPoint) == WALL)
-		return false;
+		return NULL;
 	if (last != NULL)
 	{
 		if (targetPoint == *last && *pos == lastPos)
@@ -670,7 +670,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 	vector<Point2D_hg>::iterator gray_iterator;
 	do {
 		if (pq.empty())
-			return false;
+			return NULL;
 		bestPoint = pq.top();
 		pq.pop();
 		gray_iterator = find(gray.begin(), gray.end(), bestPoint);
@@ -740,7 +740,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 			}
 		}
 	} while (true);
-	return false;
+	return NULL;
 }
 
 bool isHealthStorage(Point2D* pos) {

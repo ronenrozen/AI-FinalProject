@@ -1,8 +1,8 @@
 #ifndef __BULLET_H
 #define __BULLET_H
 #pragma once
-#include "Room.h"
-
+#include "glut.h"
+#include "Const.h"
 const double SPEED = 0.01;
 
 class Bullet

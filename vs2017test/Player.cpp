@@ -3,10 +3,10 @@
 extern int maze[MSZ][MSZ];
 extern bool done;
 
-Player::Player(Point2D* pos,int target, int otherPlayer):Target(pos->getX(),pos->getY(), target)
+Player::Player(Point2D* pos, int target, int otherPlayer) :Target(pos->getX(), pos->getY(), target)
 {
-	
-	bullet = new Bullet(double(x), double(y),false, 0.1, 0.1);
+
+	bullet = new Bullet(double(x), double(y), false, 0.1, 0.1);
 	this->health = 100;
 	this->ammo = 100;
 	this->otherPlayer = otherPlayer;
@@ -59,9 +59,9 @@ void Player::mouve(Point2D* next)
 	y = next->getY();
 }
 
-void Player::simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
+void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
 {
-	for (int i = 0; i < 360; i=i+20)
+	for (int i = 0; i < 360; i = i + 20)
 	{
 		bullet->SetX(x);
 		bullet->SetY(y);
@@ -71,25 +71,25 @@ void Player::simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 		bool stop = false;
 		int row, col;
 		double delta = 10;
-		
+
 		while (!stop)
 		{
 			stop = true;
-			
-				if (bullet->GetIsMoving())
+
+			if (bullet->GetIsMoving())
+			{
+				stop = false;
+				row = MSZ * (bullet->GetY() + 1) / 2;
+				col = MSZ * (bullet->GetX() + 1) / 2;
+				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE && delta>0)
 				{
-					stop = false;
-					row = MSZ * (bullet->GetY() + 1) / 2;
-					col = MSZ * (bullet->GetX() + 1) / 2;
-					if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE&&delta>0)
-					{
-						securityMap[row][col] += delta;
-						bullet->Move(maze);
-						stop = true;
-					}
-					
+					securityMap[row][col] += delta;
+					bullet->Move(maze);
+					stop = true;
 				}
-				delta=delta-0.1;//need to be checeked
+
+			}
+			delta = delta - 0.1;//need to be checeked
 		}
 	}
 }
@@ -101,7 +101,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 	bullet->SetY(y);
 	double dx = t.getX() - x;
 	double dy = t.getY() - y;
-	double dis;//=sqrt(dx^2 +dy^2) TODO
+	double dis = sqrt(pow(dx, 2) + pow(dy, 2));//=sqrt(dx^2 +dy^2) TODO
 	double dirX = x / dis;
 	double dirY = y / dis;
 	bullet->SetDirX(dirX);
@@ -117,7 +117,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 
 		if (bullet->GetIsMoving())
 		{
-			
+
 			row = MSZ * (bullet->GetY() + 1) / 2;
 			col = MSZ * (bullet->GetX() + 1) / 2;
 			if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
@@ -128,27 +128,27 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 					power = power - 1;//need to be checked
 					stop = false;
 				}
-				
+
 				if (maze[row][col] == otherPlayer)
 				{
-				//opponentPlater=opponentsTeam.find(player(row,col,otherPlayer color)
-					
-					//opponentPlater.increasHealth(power)
+					//opponentPlater=opponentsTeam.find(player(row,col,otherPlayer color)
+
+						//opponentPlater.increasHealth(power)
 					stop = false;
 				}
-				
+
 			}
-		
+
 		}
 
 	}
 }
-std::list<Player> getOpponnentsTeam() {
-	return this->opponentsTeam;
+std::list<Player> Player::getOpponnentsTeam() {
+	return opponentsTeam;
 }
 void Player::setOpponentsTeam(std::list<Player> opponentsTeam)
 {
-	&(this->opponentsTeam) = opponentsTeam;
+	this->opponentsTeam = opponentsTeam;
 }
 
 //----------------------------------------------------------------------------old-code-----------------------------------------------------------------------------------------------------
