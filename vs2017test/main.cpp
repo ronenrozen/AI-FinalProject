@@ -1,43 +1,7 @@
-#include "glut.h"
-#include <time.h>
-#include <vector>
-#include <iostream>
-#include "Const.h"
-#include "Node.h"
-#include "Room.h"
-#include <queue>
-#include "CompareNodes.h"
-#include "Bullet.h"
-#include <math.h>
-#include "Grenade.h"
-#include <list>
-#include <set>
-#include "Point2D.h"
-#include "Player.h"
-#include "Storage.h"
+#include "main.h"
 using namespace std;
 
 
-int maze[MSZ][MSZ];
-int roomMat[MSZ][MSZ];
-double security_map[MSZ][MSZ] = { 0 };
-
-Room rooms[NUM_ROOMS]; // runs default constructor
-std::list<Player> groupA;
-std::list<Player> groupB;
-std::vector<Target> ammoStorages;
-std::vector<Target> healthStorages;
-bool start_BFS = false;
-
-
-Bullet* pb = nullptr;
-Grenade* pg = nullptr;
-Point2D** storages;
-
-void SetupMaze();
-void initTwoPlayers();
-void initStorages();
-void initObjects();
 void init()
 {
 	//    RED, GREEN, BLUE
@@ -108,7 +72,7 @@ void UpdatePQ(priority_queue <Node*, vector<Node*>, CompareNodes>& pq, Node* pn)
 	}
 }
 
-void 	AddNeighbor(Node* pCurrent, int direction,
+void AddNeighbor(Node* pCurrent, int direction,
 	priority_queue <Node*, vector<Node*>, CompareNodes>& pq, vector <Node>& gray, vector <Node>& black,
 	int target_index)
 {
@@ -410,83 +374,6 @@ void BuildPath(Node* pCurrent)
 	}
 }
 
-/*
-void BFSIteration()
-{
-	Node* pCurrent;
-	Node* next;
-	if (gray.empty()) // there is  no solution
-	{
-		cout << "there is  no solution\n";
-		start_BFS = false;
-	}
-	else
-	{
-		// 1. extract first element from gray
-		pCurrent = gray[0];
-		gray.erase(gray.begin());
-		// 2. paint pCurrent black
-		if(maze[pCurrent->GetRow()][pCurrent->GetCol()]!=START)
-			maze[pCurrent->GetRow()][pCurrent->GetCol()] = BLACK_SPACE;
-		// 3. Add white neighbours of pCurrent to gray
-		// check up
-		if (maze[pCurrent->GetRow() + 1][pCurrent->GetCol()] == SPACE) // SPACE means that it is WHITE
-		{
-			maze[pCurrent->GetRow() + 1][pCurrent->GetCol()] = GRAY;
-			next = new Node(pCurrent->GetRow() + 1, pCurrent->GetCol(), pCurrent); // create it
-			gray.push_back(next);
-		}
-		else if (maze[pCurrent->GetRow() + 1][pCurrent->GetCol()] == TARGET)
-		{
-			cout << "the solution has been found\n";
-			start_BFS = false;
-			BuildPath(pCurrent);
-		}
-
-		// check right
-		if (maze[pCurrent->GetRow() ][pCurrent->GetCol()+ 1] == SPACE) // SPACE means that it is WHITE
-		{
-			maze[pCurrent->GetRow() ][pCurrent->GetCol()+ 1] = GRAY;
-			next = new Node(pCurrent->GetRow(), pCurrent->GetCol() + 1, pCurrent); // create it
-			gray.push_back(next);
-		}
-		else if (maze[pCurrent->GetRow()][pCurrent->GetCol() + 1] == TARGET)
-		{
-			cout << "the solution has been found\n";
-			start_BFS = false;
-			BuildPath(pCurrent);
-		}
-
-		// check down
-		if (maze[pCurrent->GetRow() - 1][pCurrent->GetCol()] == SPACE) // SPACE means that it is WHITE
-		{
-			maze[pCurrent->GetRow() - 1][pCurrent->GetCol()] = GRAY;
-			next = new Node(pCurrent->GetRow() - 1, pCurrent->GetCol(), pCurrent); // create it
-			gray.push_back(next);
-		}
-		else if (maze[pCurrent->GetRow() - 1][pCurrent->GetCol()] == TARGET)
-		{
-			cout << "the solution has been found\n";
-			start_BFS = false;
-			BuildPath(pCurrent);
-		}
-
-		// check left
-		if (maze[pCurrent->GetRow()][pCurrent->GetCol() - 1] == SPACE) // SPACE means that it is WHITE
-		{
-			maze[pCurrent->GetRow()][pCurrent->GetCol() - 1] = GRAY;
-			next = new Node(pCurrent->GetRow(), pCurrent->GetCol() - 1, pCurrent); // create it
-			gray.push_back(next);
-		}
-		else if (maze[pCurrent->GetRow() ][pCurrent->GetCol()-1] == TARGET)
-		{
-			cout << "the solution has been found\n";
-			start_BFS = false;
-			BuildPath(pCurrent);
-		}
-	}
-}
-*/
 
 void display()
 {
@@ -516,7 +403,7 @@ void menu(int choice)
 {
 	if (choice == 1) // BFS
 	{
-		play();
+		game();
 		//pb->Shoot();
 	}
 	//else if (choice == 2) // DFS
@@ -545,7 +432,7 @@ void mouse(int button, int state, int x, int y)
 	}
 }
 
-set<int> randomTwoRoomsNums() {
+std::set<int> randomTwoRoomsNums() {
 	std::set<int> roomsToStorage;
 	do {
 		int roomNum = rand() % NUM_ROOMS;
@@ -568,7 +455,8 @@ Point2D* getPoint(Room room) {
 	return pos;
 }
 
-void initTwoPlayers() {
+void initTwoPlayers() 
+{
 	int count = 11;
 	std::set<int> randomTwoRooms = randomTwoRoomsNums();
 	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++, count++) {
@@ -583,7 +471,8 @@ void initTwoPlayers() {
 
 }
 
-void initStorages() {
+void initStorages() 
+{
 	std::set<int> randomTwoRoomsForHealthStorage = randomTwoRoomsNums();
 
 	for (auto it = randomTwoRoomsForHealthStorage.begin(); it != randomTwoRoomsForHealthStorage.end(); it++) {
@@ -605,7 +494,8 @@ void initStorages() {
 }
 
 
-void initObjects() {
+void initObjects() 
+{
 	int count = 0;
 	for (int countRoom = 0; countRoom < NUM_ROOMS; countRoom++) {
 		std::vector<Point2D> objects;
@@ -628,7 +518,7 @@ void play(std::list<Player>A, std::list<Player> B)
 	UpdateSecurityMap(B);
 	std::list<Target> target = chooseTarget(p1, B);
 	Point2D* nextStep = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(target.getX(), target.getY()), -1);
-	int currentRoom = roomMat[p1.getX][p1.getY];
+	int currentRoom = roomMat[p1.getY()][p1.getX()];
 	if (currentRoom >= 0)
 	{
 		nextStep = rooms[currentRoom].aStar(maze, security_map, p1, target);
@@ -651,14 +541,17 @@ void play(std::list<Player>A, std::list<Player> B)
 	A.push_back(p1);
 
 }
-Target chooseTarget(Player p1, std::list<Player> B) {
-	if (p1.getHealth < 25)
+std::list<Target> chooseTarget(Player p1, std::list<Player> B) 
+{
+	if (p1.getHealth() < p1.getVariable()) {
 		return findMinTargetInVector(p1, healthStorages);
-	if (p1.getAmmo == 0);
-	return findMinTargetInVector(p1, ammoStorages);
+	}
+	if (p1.getAmmo() < p1.getVariable()) {
+		return findMinTargetInVector(p1, ammoStorages);
+	}
 	return  findMinTargetInVector(p1, createTargetVectorFromPlayers(B));
 }
-Target findMinTargetInVector(Player p1, std::vector<Target> t)
+std::list<Target> findMinTargetInVector(Player p1, std::vector<Target> t)
 {
 	//find target with minimum distance from t
 }
@@ -673,9 +566,10 @@ std::vector<Target>  createTargetVectorFromPlayers(std::list<Player> players)
 	return targets;
 }
 
-void game() {
+void game() 
+{
 	int mouves = 0;
-	while (!groupA.empty || !groupB.empty)
+	while (!groupA.empty() || !groupB.empty())
 	{
 		if (mouves % 2 == 0)
 			play(groupA, groupB);
@@ -711,12 +605,12 @@ int getColor(Point2D& point) {
 	return maze[point.getY()][point.getX()];
 }
 int getRoom(Point2D* p) {
-	return roomMat[p->getX][p->getY];
+	return roomMat[p->getY()][p->getX()];
 }
 Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
 {
 
-	while (!solution.empty)
+	while (!solution.empty())
 	{
 		Point2D_hg temp = solution.back();
 		solution.pop_back();
@@ -774,7 +668,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE) {
-			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -787,7 +681,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE) {
-			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -800,7 +694,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
 		if (getColor(neighborPos) == SPACE) {
-			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -813,7 +707,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
 		if (getColor(neighborPos) == SPACE) {
-			int g = bestPointAsParent->getG + security_map[neighborPos.getX][neighborPos.getY] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
