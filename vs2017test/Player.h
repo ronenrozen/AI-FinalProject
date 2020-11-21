@@ -6,7 +6,6 @@
 #include <thread>
 #include "Target.h"
 #include "Bullet.h"
-#include "Bullet.h"
 #include <list>
 class Player: public Target
 {

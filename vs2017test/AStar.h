@@ -28,4 +28,4 @@ private:
 	int getColor(Point2D& point);
 	int maze[MSZ][MSZ];
 };
-#endif __ASTAR_H
+#endif //__ASTAR_H

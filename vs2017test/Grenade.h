@@ -1,3 +1,7 @@
+#ifndef __GRANADE_H
+#define __GRANADE_H
+
+
 #pragma once
 #include "Bullet.h"
 const int NUM_BULLETS = 20;
@@ -17,4 +21,4 @@ public:
 
 
 };
-
+#endif // !__GRANADE_H

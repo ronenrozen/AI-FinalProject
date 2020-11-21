@@ -1,3 +1,7 @@
+#ifndef __NODE_H
+#define __NODE_H
+
+
 #pragma once
 class Node
 {
@@ -25,3 +29,4 @@ public:
 	}
 };
 
+#endif // !__NODE_H
