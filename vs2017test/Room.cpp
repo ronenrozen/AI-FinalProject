@@ -75,13 +75,25 @@ void Room::addTarget(Target t)
 
 bool Room::ramoveTarget(Target t)
 {
-	
-	//erase target from TARGETS VECTOR
+	for (auto it = targets.begin(); it != targets.end(); ++it)
+	{
+		if (t == *it)
+		{
+			targets.erase(it);
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Room::containsTarget(Target t)
 {
-	//find target in targets vector
+	for (auto it = targets.begin(); it != targets.end(); ++it)
+	{
+		if (t == *it)
+			return true;
+	}
+	return false;
 }
 
 Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Point2D t)
