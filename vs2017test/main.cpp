@@ -542,9 +542,14 @@ void play(std::list<Player>A, std::list<Player> B)
 		{
 			nextStep = rooms[currentRoom].aStar(maze, p1, nextStep);
 		}
-		maze[p1.getY()][p1.getX()] = SPACE;
+		int tempX = p1.getX();
+		int tempY = p1.getY();
 		p1.mouve(nextStep);
-		maze[p1.getY()][p1.getX()] = p1.getTarget();
+		maze[tempY][tempX] = SPACE;
+		display();
+
+	
+		maze[nextStep->getY()][nextStep->getX()] = p1.getTarget();
 		display();
 		std::list<Player> oponnents = p1.getOpponnentsTeam();
 		for (std::list<Player>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)

@@ -55,8 +55,9 @@ int Player::getAmmo()
 
 void Player::mouve(Point2D* next)
 {
-	x = next->getX();
-	y = next->getY();
+	this->setX(next->getX());
+	this->setY(next->getY());
+	
 }
 
 void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])

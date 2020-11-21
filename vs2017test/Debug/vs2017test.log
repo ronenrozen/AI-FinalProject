@@ -1,0 +1,35 @@
+﻿  AStar.cpp
+C:\AI-FinalProject\vs2017test\AStar.cpp(66,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\AStar.cpp(79,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\AStar.cpp(92,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\AStar.cpp(105,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Bullet.cpp
+C:\AI-FinalProject\vs2017test\Bullet.cpp(29,9): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\Bullet.cpp(30,9): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  ComparePoints.cpp
+  Grenade.cpp
+C:\AI-FinalProject\vs2017test\Grenade.cpp(57,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\Grenade.cpp(58,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Player.cpp
+C:\AI-FinalProject\vs2017test\Player.cpp(83,38): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\Player.cpp(84,38): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\Player.cpp(122,37): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\Player.cpp(123,37): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Point2D_hg.cpp
+  Room.cpp
+C:\AI-FinalProject\vs2017test\Room.cpp(107,11): warning C4101: 'temp': unreferenced local variable
+  Storage.cpp
+  main.cpp
+C:\AI-FinalProject\vs2017test\main.cpp(8,27): warning C4305: 'argument': truncation from 'double' to 'GLclampf'
+C:\AI-FinalProject\vs2017test\main.cpp(10,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\AI-FinalProject\vs2017test\main.cpp(610,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\AI-FinalProject\vs2017test\main.cpp(717,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\main.cpp(730,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\main.cpp(743,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\main.cpp(756,10): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\AI-FinalProject\vs2017test\main.cpp(779,42): warning C4551: function call missing argument list
+C:\AI-FinalProject\vs2017test\main.cpp(804,7): warning C4551: function call missing argument list
+  Generating Code...
+C:\AI-FinalProject\vs2017test\main.cpp(658): warning C4715: 'findRoomExit': not all control paths return a value
+C:\AI-FinalProject\vs2017test\Room.cpp(123): warning C4715: 'Room::aStar': not all control paths return a value
+  vs2017test.vcxproj -> C:\AI-FinalProject\Debug\vs2017test.exe
