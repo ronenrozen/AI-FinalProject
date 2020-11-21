@@ -56,28 +56,23 @@ void init()
 
 void UpdateSecurityMap(std::list<Player> B)
 {
-	security_map[MSZ][MSZ] = { 0 };
-	for (std::vector<Player>::iterator it = B.begin(); it != B.end(); ++it)
+	
+	int num_grenades = 5000;
+	int i;
+	double x, y;
+
+	for (i = 0; i < num_grenades; i++)
 	{
-		it->simulateShoot(security_map);
+		//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
+		x = 2 * (rand() % MSZ) / (double)MSZ - 1;
+		y = 2 * (rand() % MSZ) / (double)MSZ - 1;
+
+		Grenade* p = new Grenade(x, y);
+
+		p->UpdateSecurityMap(maze, security_map);
+
+		//		delete p;
 	}
-	//to do
-	//int num_grenades = 5000;
-	//int i;
-	//double x, y;
-
-	//for (i = 0; i < num_grenades; i++)
-	//{
-	//	//		Grenade* p = new Grenade(rand() % MSZ, rand() % MSZ); // here was the bug!!!
-	//	x = 2 * (rand() % MSZ) / (double)MSZ - 1;
-	//	y = 2 * (rand() % MSZ) / (double)MSZ - 1;
-
-	//	Grenade* p = new Grenade(x, y);
-
-	//	p->UpdateSecurityMap(maze, security_map);
-
-	//	//		delete p;
-	//}
 
 }
 
@@ -631,7 +626,7 @@ void play(std::list<Player>A, std::list<Player> B)
 	p1.setOpponentsTeam(B);
 	A.pop_back();
 	UpdateSecurityMap(B);
-	Target target = chooseTarget(p1, B);
+	std::list<Target> target = chooseTarget(p1, B);
 	Point2D* nextStep = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(target.getX(), target.getY()), -1);
 	int currentRoom = roomMat[p1.getX][p1.getY];
 	if (currentRoom >= 0)
@@ -639,6 +634,15 @@ void play(std::list<Player>A, std::list<Player> B)
 		nextStep = rooms[currentRoom].aStar(maze, security_map, p1, target);
 	}
 	p1.mouve(nextStep);
+	std::list<Player> oponnents = p1.getOpponnentsTeam();
+	for (std::list<Player>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
+	{
+		Target t = *it;
+		if (rooms[currentRoom].containsTarget(t))
+		{
+			p1.shoot(t, maze);
+		}
+	}
 	if (nextStep->operator==(target));
 	{
 		action(currentRoom, p1, target);

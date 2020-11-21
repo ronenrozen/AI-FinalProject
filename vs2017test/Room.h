@@ -15,6 +15,7 @@ private:
 	int cx, cy, width, height,myIndex;
 	std::vector<Point2D> objects;
 	std::vector<Target> targets;
+	
    
 public:
 	Room();
@@ -33,7 +34,7 @@ public:
 	void addTarget(Target t);
 	bool ramoveTarget(Target t);
 	bool containsTarget(Target t);
-	Point2D* aStar(int m[MSZ][MSZ],int securityMap[MSZ][MSZ], Player p, Target t);
+	Point2D* aStar(int m[MSZ][MSZ],double securityMap[MSZ][MSZ], Player p, Target t);
 	void Init(int m[MSZ][MSZ],int roomsMat[MSZ][MSZ]);
 	bool Overlap(int w, int h, int cx, int cy);
 
