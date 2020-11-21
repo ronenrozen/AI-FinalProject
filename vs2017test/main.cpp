@@ -520,14 +520,14 @@ void play(std::list<Player>A, std::list<Player> B)
 	int length=MSZ*MSZ,tempLength;
 	Point2D* nextStep;
 	Target* currentTarget;
-	for (std::list<Target>::iterator it = targets.begin(); it != targets.end(); ++it)
+	for (auto it = targets.begin(); it != targets.end(); ++it)
 	{
 		Point2D* temp = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(it->getX(), it->getY()), -1,&tempLength);
 		if (tempLength < length)
 		{
 			nextStep = temp;
 			length = tempLength;
-			currentTarget =  it;
+			*currentTarget = *it;
 		}
 		else {
 			delete temp;
