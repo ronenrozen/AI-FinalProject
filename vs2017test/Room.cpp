@@ -84,7 +84,7 @@ bool Room::containsTarget(Target t)
 	//find target in targets vector
 }
 
-Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Target t)
+Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Point2D t)
 {
 	Point2D* init = new Point2D(p.getX(), p.getY());
 	Point2D* temp,lastTemp;
@@ -92,8 +92,8 @@ Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Ta
 	std::list<Player> opponnentTeam = p.getOpponnentsTeam();
 	for (std::list<Player>::iterator it = opponnentTeam.begin(); it != opponnentTeam.end(); ++it)
 	{
-		Target t = *it;
-		if(this->containsTarget(t))
+		Target temp = *it;
+		if(this->containsTarget(temp))
 			it->simulateShoot(m,securityMap);
 	}
 	AStar* roomA = new AStar(init);
