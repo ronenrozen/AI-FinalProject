@@ -626,12 +626,28 @@ void play(std::list<Player>A, std::list<Player> B)
 	p1.setOpponentsTeam(B);
 	A.pop_back();
 	UpdateSecurityMap(B);
-	std::list<Target> target = chooseTarget(p1, B);
-	Point2D* nextStep = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(target.getX(), target.getY()), -1);
+	std::list<Target> targets = chooseTarget(p1, B);
+	int length=MSZ*MSZ,tempLength;
+	Point2D* nextStep;
+	Target* currentTarget;
+	for (std::list<Target>::iterator it = targets.begin(); it != targets.end(); ++it)
+	{
+		Point2D* temp = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(it->getX(), it->getY()), -1,&tempLength);
+		if (tempLength < length)
+		{
+			nextStep = temp;
+			length = tempLength;
+			currentTarget =  it;
+		}
+		else {
+			delete temp;
+		}
+	}
+	
 	int currentRoom = roomMat[p1.getX][p1.getY];
 	if (currentRoom >= 0)
 	{
-		nextStep = rooms[currentRoom].aStar(maze, security_map, p1, target);
+		nextStep = rooms[currentRoom].aStar(maze, security_map, p1, *nextStep);
 	}
 	p1.mouve(nextStep);
 	std::list<Player> oponnents = p1.getOpponnentsTeam();
@@ -643,9 +659,9 @@ void play(std::list<Player>A, std::list<Player> B)
 			p1.shoot(t, maze);
 		}
 	}
-	if (nextStep->operator==(target));
+	if (nextStep->operator==());
 	{
-		action(currentRoom, p1, target);
+		action(currentRoom, p1, currentTarget);
 
 	}
 	A.push_back(p1);
@@ -726,7 +742,7 @@ Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
 	}
 	//TODO
 }
-Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
+Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 	Point2D lastPos = Point2D(*pos);
 	Point2D* last = NULL;
 	int currentRoom = getRoom(pos);
@@ -736,7 +752,11 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 	if (last != NULL)
 	{
 		if (targetPoint == *last && *pos == lastPos)
+		{
+			*length = solution.size();
 			return findRoomExit(solution, currentRoom);
+		}
+			
 		delete last;
 		solution.clear();
 	}
@@ -769,6 +789,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG) {
 				solution.push_back(*bestPointAsParent);
 				bestPointAsParent = bestPointAsParent->getParent();
 			}
+			*length = solution.size();
 			return findRoomExit(solution, currentRoom);
 		}
 
