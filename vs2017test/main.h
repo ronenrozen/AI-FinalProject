@@ -9,7 +9,6 @@
 #include "Const.h"
 #include "Node.h"
 #include "Room.h"
-#include <queue>
 #include "CompareNodes.h"
 #include "Bullet.h"
 #include <math.h>
@@ -19,6 +18,7 @@
 #include "Point2D.h"
 #include "Player.h"
 #include "Storage.h"
+#include <queue>
 
 int maze[MSZ][MSZ];
 int roomMat[MSZ][MSZ];
@@ -43,9 +43,9 @@ void initObjects();
 void init();
 void UpdateSecurityMap(std::list<Player> B);
 double Distance(int x1, int y1, int x2, int y2);
-void UpdatePQ(priority_queue <Node*, vector<Node*>, CompareNodes>& pq, Node* pn);
+void UpdatePQ(priority_queue<Node*, vector<Node*>, CompareNodes>& pq, Node* pn);
 void AddNeighbor(Node* pCurrent, int direction,
-	priority_queue <Node*, vector<Node*>, CompareNodes>& pq, vector <Node>& gray, vector <Node>& black,
+	priority_queue<Node*, vector<Node*>, CompareNodes>& pq, vector <Node>& gray, vector <Node>& black,
 	int target_index);
 void RestorePath(Node* pCurrent);
 void DigPath(int index1, int index2);
@@ -71,7 +71,7 @@ void main(int argc, char* argv[]);
 int getColor(Point2D& point);
 int getRoom(Point2D* p);
 Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom);
-Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG);
+Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length);
 bool isHealthStorage(Point2D* pos);
 bool isAmmoStorage(Point2D* pos);
 bool isStorage(Point2D* pos);

@@ -7,6 +7,7 @@
 #include "Target.h"
 #include "Bullet.h"
 #include <list>
+#include <math.h>
 class Player: public Target
 {
 public:
@@ -30,7 +31,7 @@ private:
 	int health;
 	int ammo;
 	int variable;
-	std::vector<Player>opponentsTeam;
+	std::list<Player>opponentsTeam;
 
 };
 #endif // __PLAYER_H_

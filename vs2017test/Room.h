@@ -2,7 +2,6 @@
 #define __ROOM_H
 
 #pragma once
-#include "Room.h"
 #include <math.h>
 #include "Const.h"
 #include <vector>
