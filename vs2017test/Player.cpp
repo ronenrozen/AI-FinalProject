@@ -54,7 +54,7 @@ void Player::mouve(Point2D* next)
 	y = next->getY;
 }
 
-void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
+void Player::simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 {
 	for (int i = 0; i < 360; i=i+20)
 	{
@@ -65,7 +65,7 @@ void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
 		bullet->Shoot();
 		bool stop = false;
 		int row, col;
-		double delta = 50;
+		double delta = 10;
 		
 		while (!stop)
 		{
@@ -76,7 +76,7 @@ void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
 					stop = false;
 					row = MSZ * (bullet->GetY() + 1) / 2;
 					col = MSZ * (bullet->GetX() + 1) / 2;
-					if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE)
+					if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE&&delta>0)
 					{
 						securityMap[row][col] += delta;
 						bullet->Move(maze);
@@ -84,7 +84,7 @@ void Player::simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ])
 					}
 					
 				}
-				delta--;//need to be checeked
+				delta=delta-0.1;//need to be checeked
 		}
 	}
 }
@@ -138,10 +138,12 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 
 	}
 }
-
+std::list<Player> getOpponnentsTeam() {
+	return this->opponentsTeam;
+}
 void Player::setOpponentsTeam(std::list<Player> opponentsTeam)
 {
-	this->opponentsTeam = opponentsTeam;
+	&(this->opponentsTeam) = opponentsTeam;
 }
 
 //----------------------------------------------------------------------------old-code-----------------------------------------------------------------------------------------------------

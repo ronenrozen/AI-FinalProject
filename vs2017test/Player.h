@@ -20,9 +20,10 @@ public:
 	int getHealth();
 	int getAmmo();
 	void mouve(Point2D* next);
-	void simulateShoot(int maze[MSZ][MSZ],int securityMap[MSZ][MSZ]);
+	void simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ]);
 	void shoot(Target t, int maze[MSZ][MSZ]);
 	void setOpponentsTeam(std::list<Player>opponentsTeam);
+	std::list<Player> getOpponnentsTeam();
 	/*~Player();
 	void Player::setMonsters(int numberOfMonster, Point2D**& monsters);
 	void Player::setCoins(int numberOfCoins, Point2D**& coins);
