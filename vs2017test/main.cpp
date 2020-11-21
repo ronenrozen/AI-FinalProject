@@ -534,9 +534,6 @@ void play(std::list<Player>A, std::list<Player> B)
 		}
 	}
 	
-	int currentRoom = roomMat[p1.getX][p1.getY];
-	std::list<Target> target = chooseTarget(p1, B);
-	Point2D* nextStep = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(target.getX(), target.getY()), -1);
 	int currentRoom = roomMat[p1.getY()][p1.getX()];
 	if (currentRoom >= 0)
 	{
@@ -552,9 +549,10 @@ void play(std::list<Player>A, std::list<Player> B)
 			p1.shoot(t, maze);
 		}
 	}
-	if (nextStep->operator==());
+	Point2D* targetPoint = new Point2D(currentTarget->getX(), currentTarget->getY());
+	if (nextStep->operator==*targetPoint)
 	{
-		action(currentRoom, p1, currentTarget);
+		action(currentRoom, p1, *currentTarget);
 
 	}
 	A.push_back(p1);
