@@ -140,6 +140,7 @@
     <ClInclude Include="Const.h" />
     <ClInclude Include="glut.h" />
     <ClInclude Include="Grenade.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point2D.h" />

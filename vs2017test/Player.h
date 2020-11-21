@@ -19,33 +19,19 @@ public:
 	void refillAmmo();
 	int getHealth();
 	int getAmmo();
+	int getVariable();
 	void mouve(Point2D* next);
 	void simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ]);
 	void shoot(Target t, int maze[MSZ][MSZ]);
 	void setOpponentsTeam(std::list<Player>opponentsTeam);
 	std::list<Player> getOpponnentsTeam();
-	/*~Player();
-	void Player::setMonsters(int numberOfMonster, Point2D**& monsters);
-	void Player::setCoins(int numberOfCoins, Point2D**& coins);
-	void run();*/
 private:
-	//bool win;
 	Bullet* bullet;
 	int otherPlayer;
 	int health;
 	int ammo;
+	int variable;
 	std::vector<Player>opponentsTeam;
-	/*vector<Point2D> coins;
-	vector<AStar*> aStarCoins;
-	Point2D* lastPosCoin;
-	int indexCoin;
 
-	vector<Point2D*> monsters;
-	AStar* runMonster;
-	Point2D* lastPosRunMonster;
-	bool runFromMonster();
-	void newFromMonsterPoint(Point2D*& monster);
-
-	void searchCoins();*/
 };
 #endif // __PLAYER_H_

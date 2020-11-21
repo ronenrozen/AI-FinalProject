@@ -3,7 +3,7 @@
 extern int maze[MSZ][MSZ];
 extern bool done;
 
-Player::Player(Point2D* pos,int target, int otherPlayer):Target(pos->getX,pos->getY, target)
+Player::Player(Point2D* pos,int target, int otherPlayer):Target(pos->getX(),pos->getY(), target)
 {
 	
 	bullet = new Bullet(double(x), double(y),false, 0.1, 0.1);
@@ -43,6 +43,11 @@ int Player::getHealth()
 	return health;
 }
 
+int Player::getVariable()
+{
+	return variable;
+}
+
 int Player::getAmmo()
 {
 	return ammo;
@@ -50,16 +55,16 @@ int Player::getAmmo()
 
 void Player::mouve(Point2D* next)
 {
-	x = next->getX;
-	y = next->getY;
+	x = next->getX();
+	y = next->getY();
 }
 
 void Player::simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 {
 	for (int i = 0; i < 360; i=i+20)
 	{
-		bullet->SetX = x;
-		bullet->SetY = y;
+		bullet->SetX(x);
+		bullet->SetY(y);
 		bullet->SetDirX(cos(i));
 		bullet->SetDirY(sin(i));
 		bullet->Shoot();
@@ -92,10 +97,10 @@ void Player::simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 void Player::shoot(Target t, int maze[MSZ][MSZ])
 {
 	//if grnade is in range activate grnade 
-	bullet->SetX = x;
-	bullet->SetY = y;
-	double dx = t.getX - x;
-	double dy = t.getY - y;
+	bullet->SetX(x);
+	bullet->SetY(y);
+	double dx = t.getX() - x;
+	double dy = t.getY() - y;
 	double dis;//=sqrt(dx^2 +dy^2) TODO
 	double dirX = x / dis;
 	double dirY = y / dis;
