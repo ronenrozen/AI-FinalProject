@@ -4,21 +4,22 @@
 #pragma once
 #include "glut.h"
 #include <time.h>
+#include <math.h>
 #include <vector>
 #include <iostream>
+#include <list>
+#include <set>
+#include <queue>
+
+#include "Point2D.h"
+#include "Player.h"
+#include "Storage.h"
 #include "Const.h"
 #include "Node.h"
 #include "Room.h"
 #include "CompareNodes.h"
 #include "Bullet.h"
-#include <math.h>
 #include "Grenade.h"
-#include <list>
-#include <set>
-#include "Point2D.h"
-#include "Player.h"
-#include "Storage.h"
-#include <queue>
 
 int maze[MSZ][MSZ];
 int roomMat[MSZ][MSZ];
@@ -43,10 +44,6 @@ void initObjects();
 void init();
 void UpdateSecurityMap(std::list<Player> B);
 double Distance(int x1, int y1, int x2, int y2);
-void UpdatePQ(priority_queue<Node*, vector<Node*>, CompareNodes>& pq, Node* pn);
-void AddNeighbor(Node* pCurrent, int direction,
-	priority_queue<Node*, vector<Node*>, CompareNodes>& pq, vector <Node>& gray, vector <Node>& black,
-	int target_index);
 void RestorePath(Node* pCurrent);
 void DigPath(int index1, int index2);
 void DigPathes();

@@ -519,15 +519,15 @@ void play(std::list<Player>A, std::list<Player> B)
 	std::list<Target> targets = chooseTarget(p1, B);
 	int length=MSZ*MSZ,tempLength;
 	Point2D* nextStep;
-	Target* currentTarget;
-	for (auto it = targets.begin(); it != targets.end(); ++it)
+	Target currentTarget;
+	for (auto it =targets.begin(); it != targets.end(); ++it)
 	{
 		Point2D* temp = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(it->getX(), it->getY()), -1,&tempLength);
 		if (tempLength < length)
 		{
 			nextStep = temp;
 			length = tempLength;
-			*currentTarget = *it;
+			currentTarget = *it;
 		}
 		else {
 			delete temp;
@@ -549,10 +549,10 @@ void play(std::list<Player>A, std::list<Player> B)
 			p1.shoot(t, maze);
 		}
 	}
-	Point2D* targetPoint = new Point2D(currentTarget->getX(), currentTarget->getY());
+	Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
 	if (*nextStep==*targetPoint)
 	{
-		action(currentRoom, p1, *currentTarget);
+		action(currentRoom, p1, currentTarget);
 
 	}
 	A.push_back(p1);

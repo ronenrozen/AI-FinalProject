@@ -7,6 +7,7 @@
  class Target: public Point2D
 {
 public:
+	Target();
 	Target(int x, int y,int target);
 	int getTarget();
 private:
