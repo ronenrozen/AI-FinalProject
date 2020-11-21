@@ -16,12 +16,12 @@ AStar::~AStar()
 	delete last;
 }
 
-int AStar::getColor(Point2D& point) {
-	return maze[point.getY()][point.getX()];
+int AStar::getColor(Point2D* point) {
+	return maze[point->getY()][point->getX()];
 }
 
 bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][MSZ],int maxG) {
-	if (maxG == -1 && getColor(targetPoint) == WALL)
+	if (maxG == -1 && getColor(&targetPoint) == WALL)
 		return false;
 	if (last != NULL)
 	{
@@ -62,7 +62,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
-		if (getColor(neighborPos) != WALL) {
+		if (getColor(&neighborPos) != WALL) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint,g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -75,7 +75,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
-		if (getColor(neighborPos) != WALL) {
+		if (getColor(&neighborPos) != WALL) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -88,7 +88,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
-		if (getColor(neighborPos) != WALL) {
+		if (getColor(&neighborPos) != WALL) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -101,7 +101,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
-		if (getColor(neighborPos) != WALL) {
+		if (getColor(&neighborPos) != WALL) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);

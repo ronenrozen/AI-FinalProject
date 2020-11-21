@@ -26,8 +26,8 @@ void Bullet::Move(int maze[MSZ][MSZ])
 	if (isMoving)
 	{
 
-		row = MSZ * (y + 1) / 2;
-		col = MSZ * (x + 1) / 2;
+		row = y;
+		col = x;
 
 		if (maze[row][col] == WALL) // end of move
 		{

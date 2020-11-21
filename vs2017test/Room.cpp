@@ -43,6 +43,11 @@ void Room::SetObjects(std::vector<Point2D> o)
 	objects = o;
 }
 
+void Room::SetMyIndex(int index)
+{
+	this->myIndex = index;
+}
+
 int Room::GetCenterX()
 {
 	return cx;
@@ -96,11 +101,11 @@ bool Room::containsTarget(Target t)
 	return false;
 }
 
-Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Point2D t)
+Point2D* Room::aStar(int m[MSZ][MSZ], Player p, Point2D* t)
 {
 	Point2D* init = new Point2D(p.getX(), p.getY());
 	Point2D* temp,lastTemp;
-	securityMap = { 0 };
+	double securityMap[MSZ][MSZ]= { {0} };
 	std::list<Player> opponnentTeam = p.getOpponnentsTeam();
 	for (std::list<Player>::iterator it = opponnentTeam.begin(); it != opponnentTeam.end(); ++it)
 	{
@@ -109,7 +114,7 @@ Point2D* Room::aStar(int m[MSZ][MSZ], double securityMap[MSZ][MSZ], Player p, Po
 			it->simulateShoot(m,securityMap);
 	}
 	AStar* roomA = new AStar(init);
-	bool ans=roomA->run(Point2D(t.getX(), t.getY()), m, securityMap);
+	bool ans=roomA->run(Point2D(t->getX(), t->getY()), m, securityMap ,-1);
 	if (ans)
 	{
 		

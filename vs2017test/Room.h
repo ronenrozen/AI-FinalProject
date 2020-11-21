@@ -24,6 +24,7 @@ public:
 	void SetWidth(int w);
 	void SetHeight(int h);
 	void SetObjects(std::vector<Point2D> o);
+	void SetMyIndex(int index);
 
 	int GetCenterX();
 	int GetCenterY();
@@ -33,7 +34,7 @@ public:
 	void addTarget(Target t);
 	bool ramoveTarget(Target t);
 	bool containsTarget(Target t);
-	Point2D* aStar(int m[MSZ][MSZ],double securityMap[MSZ][MSZ], Player p, Point2D t);
+	Point2D* aStar(int m[MSZ][MSZ], Player p, Point2D* t);
 	void Init(int m[MSZ][MSZ],int roomsMat[MSZ][MSZ]);
 	bool Overlap(int w, int h, int cx, int cy);
 

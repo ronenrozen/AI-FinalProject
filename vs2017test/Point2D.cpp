@@ -16,6 +16,12 @@ Point2D::Point2D(int x, int y)
 	this->y = y;
 }
 
+Point2D::Point2D(Point2D* other)
+{
+	this->x = other->getX();
+	this->y = other->getY();
+}
+
 
 int Point2D::getX()
 {
@@ -26,6 +32,16 @@ int Point2D::getX()
 int Point2D::getY()
 {
 	return y;
+}
+
+void Point2D::setX(int x)
+{
+	this->x = x;
+}
+
+void Point2D::setY(int y)
+{
+	this->y = y;
 }
 
 

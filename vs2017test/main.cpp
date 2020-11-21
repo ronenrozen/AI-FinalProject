@@ -20,7 +20,7 @@ void init()
 
 void UpdateSecurityMap(std::list<Player> B)
 {
-	
+
 	int num_grenades = 5000;
 	int i;
 	double x, y;
@@ -35,7 +35,7 @@ void UpdateSecurityMap(std::list<Player> B)
 
 		p->UpdateSecurityMap(maze, security_map);
 
-		//		delete p;
+				delete p;
 	}
 
 }
@@ -293,6 +293,8 @@ void SetupMaze()
 		rooms[countRoom].SetHeight(h);
 		rooms[countRoom].SetCenterX(cx);
 		rooms[countRoom].SetCenterY(cy);
+		rooms[countRoom].SetMyIndex(countRoom);
+
 		rooms[countRoom].Init(maze, roomMat);
 	}
 
@@ -455,7 +457,7 @@ Point2D* getPoint(Room room) {
 	return pos;
 }
 
-void initTwoPlayers() 
+void initTwoPlayers()
 {
 	int count = 11;
 	std::set<int> randomTwoRooms = randomTwoRoomsNums();
@@ -471,7 +473,7 @@ void initTwoPlayers()
 
 }
 
-void initStorages() 
+void initStorages()
 {
 	std::set<int> randomTwoRoomsForHealthStorage = randomTwoRoomsNums();
 
@@ -494,7 +496,7 @@ void initStorages()
 }
 
 
-void initObjects() 
+void initObjects()
 {
 	int count = 0;
 	for (int countRoom = 0; countRoom < NUM_ROOMS; countRoom++) {
@@ -516,62 +518,66 @@ void play(std::list<Player>A, std::list<Player> B)
 	p1.setOpponentsTeam(B);
 	A.pop_back();
 	UpdateSecurityMap(B);
-	std::list<Target> targets = chooseTarget(p1, B);
-	int length=MSZ*MSZ,tempLength;
-	Point2D* nextStep;
+	std::vector<Target> targets = chooseTarget(p1, B);
+	int length = MSZ * MSZ, tempLength;
+	Point2D* nextStep = nullptr;
 	Target currentTarget;
-	for (auto it =targets.begin(); it != targets.end(); ++it)
+	for (auto it = targets.begin(); it != targets.end(); ++it)
 	{
-		Point2D* temp = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(it->getX(), it->getY()), -1,&tempLength);
+		Point2D* temp = Astar(&Point2D(p1.getX(), p1.getY()), Point2D(it->getX(), it->getY()), -1, &tempLength);
 		if (tempLength < length)
 		{
 			nextStep = temp;
 			length = tempLength;
 			currentTarget = *it;
 		}
-		else {
-			delete temp;
-		}
+		/*	else {
+				delete temp;
+			}*/
 	}
-	
+
 	int currentRoom = roomMat[p1.getY()][p1.getX()];
-	if (currentRoom >= 0)
-	{
-		nextStep = rooms[currentRoom].aStar(maze, security_map, p1, *nextStep);
-	}
-	p1.mouve(nextStep);
-	std::list<Player> oponnents = p1.getOpponnentsTeam();
-	for (std::list<Player>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
-	{
-		Target t = *it;
-		if (rooms[currentRoom].containsTarget(t))
+	if (nextStep != nullptr) {
+		if (currentRoom >= 0)
 		{
-			p1.shoot(t, maze);
+			nextStep = rooms[currentRoom].aStar(maze, p1, nextStep);
 		}
-	}
-	Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
-	if (*nextStep==*targetPoint)
-	{
-		action(currentRoom, p1, currentTarget);
+		maze[p1.getY()][p1.getX()] = SPACE;
+		p1.mouve(nextStep);
+		maze[p1.getY()][p1.getX()] = p1.getTarget();
+		display();
+		std::list<Player> oponnents = p1.getOpponnentsTeam();
+		for (std::list<Player>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
+		{
+			Target t = *it;
+			if (rooms[currentRoom].containsTarget(t))
+			{
+				p1.shoot(t, maze);
+			}
+		}
+		Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
+		if (*nextStep == *targetPoint)
+		{
+			action(currentRoom, p1, currentTarget);
 
+		}
+		A.push_back(p1);
 	}
-	A.push_back(p1);
-
 }
-std::list<Target> chooseTarget(Player p1, std::list<Player> B) 
+std::vector<Target> chooseTarget(Player p1, std::list<Player> B)
 {
 	if (p1.getHealth() < p1.getVariable()) {
-		return findMinTargetInVector(p1, healthStorages);
+		return healthStorages;
 	}
 	if (p1.getAmmo() < p1.getVariable()) {
-		return findMinTargetInVector(p1, ammoStorages);
+		return ammoStorages;
 	}
-	return  findMinTargetInVector(p1, createTargetVectorFromPlayers(B));
+	return  createTargetVectorFromPlayers(B);
 }
-std::list<Target> findMinTargetInVector(Player p1, std::vector<Target> t)
-{
-	//find target with minimum distance from t
-}
+//std::list<Target> findMinTargetInVector(Player p1, std::vector<Target> t)
+//{
+//	//find target with minimum distance from t
+//}
 
 std::vector<Target>  createTargetVectorFromPlayers(std::list<Player> players)
 {
@@ -583,7 +589,7 @@ std::vector<Target>  createTargetVectorFromPlayers(std::list<Player> players)
 	return targets;
 }
 
-void game() 
+void game()
 {
 	int mouves = 0;
 	while (!groupA.empty() || !groupB.empty())
@@ -592,6 +598,7 @@ void game()
 			play(groupA, groupB);
 		else
 			play(groupB, groupA);
+		mouves++;
 	}
 }
 void main(int argc, char* argv[])
@@ -633,11 +640,18 @@ Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
 		solution.pop_back();
 
 		if (getRoom(&temp.getPoint()) == currentRoom)
-			return &temp.getPoint();
+		{
+			Point2D* ans = (Point2D*)malloc(sizeof(Point2D));
+			Point2D* r = &temp.getPoint();
+			ans->setX(r->getX());
+			ans->setY(r->getY());
+			return ans;
+		}
+
 	}
 	//TODO
 }
-Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
+Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length) {
 	Point2D lastPos = Point2D(*pos);
 	Point2D* last = NULL;
 	int currentRoom = getRoom(pos);
@@ -649,9 +663,10 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 		if (targetPoint == *last && *pos == lastPos)
 		{
 			*length = solution.size();
-			return findRoomExit(solution, currentRoom);
+			Point2D* ans = findRoomExit(solution, currentRoom);
+			return ans;
 		}
-			
+
 		delete last;
 		solution.clear();
 	}
@@ -678,6 +693,8 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 		black.push_back(bestPoint);
 		bestPointAsParent = new Point2D_hg(bestPoint);
 		bestPointPos = bestPointAsParent->getPoint();
+		int room1 = getRoom(&bestPointPos);
+		int room2 = getRoom(&targetPoint);
 		if (getRoom(&bestPointPos) == getRoom(&targetPoint) || maxG == bestPoint.getG()) {
 			while (bestPointAsParent->getParent() != NULL)
 			{
@@ -685,7 +702,9 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int *length) {
 				bestPointAsParent = bestPointAsParent->getParent();
 			}
 			*length = solution.size();
-			return findRoomExit(solution, currentRoom);
+			Point2D* ans = (Point2D*)malloc(sizeof(Point2D));
+			ans =new Point2D( findRoomExit(solution, currentRoom));
+			return ans;
 		}
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
@@ -771,7 +790,7 @@ void action(int roomIndex, Player p1, Target t)
 	//if target.target ==storage && p1==target refill
 
 	if (isTargetAnopponentPlayer(p1, t)) {
-		p1.shoot(t,maze);
+		p1.shoot(t, maze);
 	}
 
 	Point2D* targetPos = new Point2D(t.getX(), t.getY());

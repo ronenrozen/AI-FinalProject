@@ -110,7 +110,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 	bool stop = false;
 	bullet->Move(maze);
 	int row, col;
-	int power = 50;
+	int power = 10;
 	while (!stop)
 	{
 		stop = true;
