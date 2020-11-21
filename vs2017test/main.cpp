@@ -550,7 +550,7 @@ void play(std::list<Player>A, std::list<Player> B)
 		}
 	}
 	Point2D* targetPoint = new Point2D(currentTarget->getX(), currentTarget->getY());
-	if (nextStep->operator==*targetPoint)
+	if (*nextStep==*targetPoint)
 	{
 		action(currentRoom, p1, *currentTarget);
 
