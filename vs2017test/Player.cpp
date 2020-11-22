@@ -55,9 +55,10 @@ int Player::getAmmo()
 
 void Player::mouve(Point2D* next)
 {
-	this->setX(next->getX());
+
+	this->setX( next->getX());
 	this->setY(next->getY());
-	
+
 }
 
 void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
@@ -144,10 +145,10 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 
 	}
 }
-std::list<Player> Player::getOpponnentsTeam() {
+std::list<Player*> Player::getOpponnentsTeam() {
 	return opponentsTeam;
 }
-void Player::setOpponentsTeam(std::list<Player> opponentsTeam)
+void Player::setOpponentsTeam(std::list<Player*> opponentsTeam)
 {
 	this->opponentsTeam = opponentsTeam;
 }
