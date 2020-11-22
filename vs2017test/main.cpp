@@ -543,10 +543,12 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 		{
 			nextStep = rooms[currentRoom].aStar(maze, p1, nextStep);
 		}
+
 		int c = maze[p1->getY()][p1->getX()];
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
 		maze[p1->getY()][p1->getX()] = p1->getTarget();
+
 		display();
 		std::list<Player*> oponnents = p1->getOpponnentsTeam();
 		for (std::list<Player*>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
