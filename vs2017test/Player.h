@@ -23,15 +23,16 @@ public:
 	void mouve(Point2D* next);
 	void simulateShoot(int maze[MSZ][MSZ],double securityMap[MSZ][MSZ]);
 	void shoot(Target t, int maze[MSZ][MSZ]);
-	void setOpponentsTeam(std::list<Player>opponentsTeam);
-	std::list<Player> getOpponnentsTeam();
+	void setOpponentsTeam(std::list<Player*>opponentsTeam);
+	std::list<Player*> getOpponnentsTeam();
 private:
-	Bullet* bullet;
+	
 	int otherPlayer;
 	int health;
 	int ammo;
 	int variable;
-	std::list<Player>opponentsTeam;
+	Bullet* bullet;
+	std::list<Player*>opponentsTeam;
 
 };
 #endif // __PLAYER_H_
