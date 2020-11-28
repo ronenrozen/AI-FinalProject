@@ -395,12 +395,8 @@ void menu(int choice)
 	if (choice == 1) // BFS
 	{
 		game();
-		//pb->Shoot();
 	}
-	//else if (choice == 2) // DFS
-	//{
-	//	pg->Explode();
-	//}
+
 }
 
 // x, y are in pixels
@@ -865,7 +861,7 @@ bool isAmmoStorage(Point2D* pos) {
 }
 
 bool isStorage(Point2D* pos) {
-	return  isHealthStorage || isAmmoStorage;
+	return  isHealthStorage(pos) || isAmmoStorage(pos);
 }
 
 bool isTargetAnopponentPlayer(Player p, Target t) {
@@ -888,8 +884,7 @@ void action(int roomIndex, Player* p1, Target t)
 	}
 
 	Point2D* targetPos = new Point2D(t.getX(), t.getY());
-
-	if (isStorage(targetPos) && *p1 == t) {
+	if (isStorage(targetPos)) {
 		if (isHealthStorage) {
 			p1->refillHealth();
 		}
