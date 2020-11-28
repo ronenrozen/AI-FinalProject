@@ -5,9 +5,6 @@
 #include "Const.h"
 
 #pragma once
-
-#define WEIGHT 3
-#define ALPHA 2
 class Point2D_hg
 {
 public:

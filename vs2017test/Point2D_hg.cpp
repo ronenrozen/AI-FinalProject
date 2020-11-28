@@ -25,7 +25,7 @@ Point2D_hg::Point2D_hg(Point2D& myPos, Point2D& targetPoint)
 Point2D_hg::Point2D_hg(Point2D_hg* parent, Point2D& myPos, Point2D& targetPoint, int newG)
 {
 	point = myPos;
-	h = (abs(point.getX() - targetPoint.getX()) + abs(point.getY() - targetPoint.getY())) * WEIGHT;// Manhattan Distance
+	h = (abs(point.getX() - targetPoint.getX()) + abs(point.getY() - targetPoint.getY())) * A_STAR_WEIGHT;// Manhattan Distance
 	g = newG;
 	this->parent = parent;
 	f = h + g;

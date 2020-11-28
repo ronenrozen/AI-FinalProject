@@ -9,6 +9,9 @@ const int BOTTOM = 2;
 const int LEFT = 3;
 const int RIGHT = 4;
 
+const int A_STAR_WEIGHT = 3;
+const int ALPHA = 2;
+
 const double SPACE_COST = 0.05;
 const double WALL_COST = 2;
 
