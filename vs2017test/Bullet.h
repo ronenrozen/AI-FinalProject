@@ -3,7 +3,7 @@
 #pragma once
 #include "glut.h"
 #include "Const.h"
-const double SPEED = 0.04;
+const double SPEED = 0.02;
 
 class Bullet
 {

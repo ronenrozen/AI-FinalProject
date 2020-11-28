@@ -574,13 +574,13 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			A->push_back(p1);
 			return;
 		}
-		
+		int lastRoom = currentRoom;
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
 		maze[p1->getY()][p1->getX()] = p1->getTarget();
 		display();
 		currentRoom = roomMat[p1->getY()][p1->getX()];
-		int lastRoom = currentRoom;
+		
 		if (currentRoom < 0)
 		{
 			while (currentRoom < 0)
@@ -615,6 +615,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			Target t = **it;
 			if (rooms[currentRoom].containsTarget(t))
 			{
+
 				pb = p1->getBullet();
 				p1->shoot(t, maze, security_map);
 				

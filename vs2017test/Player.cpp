@@ -26,7 +26,7 @@ void Player::decreaseHealth(int gap)
 
 void Player::refillHealth()
 {
-	this->health +=10;
+	this->health =100;
 }
 
 void Player::decreaseAmmo()
