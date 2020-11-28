@@ -580,6 +580,15 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			while (currentRoom < 0)
 			{
 				Point2D* temp = Astar(&Point2D(p1->getX(), p1->getY()), Point2D(currentTarget.getX(), currentTarget.getY()), -1, &tempLength, currentTarget.getTarget());
+				if (*temp == currentTarget)
+				{
+					int dx = currentTarget.getX() - p1->getX();
+					int dy = currentTarget.getY() - p1->getY();
+					temp->setX(temp->getX() + 2 * dx);
+					temp->setY(temp->getY() + 2 * dy);
+					break;
+
+				}
 				maze[p1->getY()][p1->getX()] = SPACE;
 				p1->mouve(temp);
 				maze[p1->getY()][p1->getX()] = p1->getTarget();
