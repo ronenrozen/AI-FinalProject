@@ -60,6 +60,10 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 			}
 			return true;
 		}
+		if (getColor(&bestPoint.getPoint()) != SPACE && getColor(&bestPoint.getPoint()) != getColor(&targetPoint))
+		{
+			int y = 0;
+		}
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
 		if (getColor(&neighborPos) == SPACE|| getColor(&neighborPos)== getColor(&targetPoint)) {
