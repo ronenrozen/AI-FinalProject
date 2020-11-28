@@ -878,19 +878,12 @@ void action(int roomIndex, Player* p1, Target t)
 	//todo
 	//if target.target==opposit team shoot target
 	//if target.target ==storage && p1==target refill
-
+	Point2D* targetPos = new Point2D(t.getX(), t.getY());
 	if (isTargetAnopponentPlayer(*p1, t)) {
 		p1->shoot(t, maze,security_map);
-	}
-
-	Point2D* targetPos = new Point2D(t.getX(), t.getY());
-	if (isStorage(targetPos)) {
-		if (isHealthStorage) {
-			p1->refillHealth();
-		}
-		else {
-			p1->refillAmmo();
-		}
+	}	
+	else if (isStorage(targetPos)) {
+		isHealthStorage(targetPos) ? p1->refillHealth() : p1->refillAmmo();
 	}
 }
 
