@@ -16,14 +16,5 @@ void Storage::refillAmmo(Player p)
 	p.refillAmmo();
 }
 
-void Storage::decreaseHealth(Player p)
-{
-	p.decreaseHealth();
-}
-
-void Storage::decreaseAmmo(Player p)
-{
-	p.decreaseAmmo();
-}
 
 
