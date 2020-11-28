@@ -67,7 +67,7 @@ void game();
 void main(int argc, char* argv[]);
 int getColor(Point2D& point);
 int getRoom(Point2D* p);
-Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom);
+Point2D* findRoomExit(std::list<Point2D_hg> solution, int currentRoom);
 Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length,int targetColor);
 bool isHealthStorage(Point2D* pos);
 bool isAmmoStorage(Point2D* pos);

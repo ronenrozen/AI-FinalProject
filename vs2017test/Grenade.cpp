@@ -44,7 +44,7 @@ void Grenade::UpdateSecurityMap(int maze[MSZ][MSZ], double map[MSZ][MSZ])
 	for (j = 0; j < MSZ; j++)
 	{
 		for (k = 0; k < MSZ; k++)
-			map[MSZ][MSZ] = 0;
+			map[j][k] = 0;
 	}
 	bool stop = false;
 	int row, col,i;

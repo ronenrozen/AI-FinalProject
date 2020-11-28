@@ -94,7 +94,7 @@ void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
 	}
 }
 
-void Player::shoot(Target t, int maze[MSZ][MSZ])
+void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 {
 	//if grnade is in range activate grnade 
 	bullet->SetX(x);
@@ -110,7 +110,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 	bool stop = false;
 	bullet->Move(maze);
 	int row, col;
-	int power = 10;
+	int power = 50;
 	while (!stop)
 	{
 		stop = true;
@@ -127,13 +127,22 @@ void Player::shoot(Target t, int maze[MSZ][MSZ])
 					bullet->Move(maze);
 					power = power - 1;//need to be checked
 					stop = false;
+					securityMap[row][col] += 0.1;
 				}
 
 				if (maze[row][col] == otherPlayer)
 				{
-					//opponentPlater=opponentsTeam.find(player(row,col,otherPlayer color)
 
-						//opponentPlater.increasHealth(power)
+					Player* opponentPlater=nullptr;
+					for (auto it = opponentsTeam.begin(); it != opponentsTeam.end(); ++it)
+					{
+						opponentPlater = *it;
+						if (*opponentPlater == t)
+							break;
+					}
+				
+
+					opponentPlater->decreaseHealth(power);
 					stop = false;
 				}
 

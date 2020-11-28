@@ -155,19 +155,7 @@ void RestorePath(Node* pCurrent)
 	{
 		if (maze[pCurrent->GetRow()][pCurrent->GetCol()] == WALL)
 		{
-			if (door)
-			{
-
-				roomMat[pCurrent->GetRow()][pCurrent->GetCol()] = -2;
-				door = false;
-			}
-		}
-		else {
-			if (!door)
-			{
-				roomMat[lastParrent->GetRow()][lastParrent->GetCol()] = -2;
-				door = true;
-			}
+			roomMat[pCurrent->GetRow()][pCurrent->GetCol()] = -2;
 		}
 		maze[pCurrent->GetRow()][pCurrent->GetCol()] = SPACE;
 		pCurrent = pCurrent->GetParent();
@@ -468,6 +456,8 @@ void initTwoPlayers()
 			Player* player = new Player(playersPos, count, count + (1 * ((i + 1) % 2) - 1 * (i % 2)));
 			maze[playersPos->getY()][playersPos->getX()] = count;
 			count == 11 ? groupA.push_back(player) : groupB.push_back(player);
+			Target t = *player;
+			rooms[*it].addTarget(t);
 		}
 	}
 
@@ -483,6 +473,8 @@ void initStorages()
 		Storage* healthStorage = new Storage(healthStoragePos, HEALTH_STORAGE);
 		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
 		healthStorages.push_back(*healthStorage);
+		Target t = *healthStorage;
+		rooms[*it].addTarget(t);
 	}
 	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
 	for (auto it = randomTwoRoomsForAmmoStorage.begin(); it != randomTwoRoomsForAmmoStorage.end(); it++) {
@@ -492,6 +484,8 @@ void initStorages()
 		Storage* ammoStorage = new Storage(ammoStoragePos, AMMO_STORAGE);
 		maze[ammoStoragePos->getY()][ammoStoragePos->getX()] = AMMO_STORAGE;
 		ammoStorages.push_back(*ammoStorage);
+		Target t = *ammoStorage;
+		rooms[*it].addTarget(t);
 	}
 }
 
@@ -515,6 +509,11 @@ void initObjects()
 void play(std::list<Player*>*A, std::list<Player*> *B)
 {
 	Player* p1 = A->front();
+	if (p1->getHealth() <= 0)
+	{
+		A->pop_front();
+		return;
+	}
 	p1->setOpponentsTeam(*B);
 	A->pop_front();
 	UpdateSecurityMap(*B);
@@ -538,23 +537,47 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 
 	int currentRoom = roomMat[p1->getY()][p1->getX()];
 	if (nextStep != nullptr) {
-		
-		if (currentRoom >= 0&& getRoom(nextStep) < 0)
+		bool r = false;
+		if (currentRoom >= 0&& getRoom(nextStep) >= 0)
 		{
 			nextStep = rooms[currentRoom].aStar(maze, p1, nextStep);
+			r = true;
 		}
 		int c = maze[p1->getY()][p1->getX()];
+		int f = p1->getX() - nextStep->getX();
+		int h = p1->getY() - nextStep->getY();
+		if (h > 1 || h < -1 || f>1 || f < -1)
+			h = h + f;
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
 		maze[p1->getY()][p1->getX()] = p1->getTarget();
 		display();
+		currentRoom = roomMat[p1->getY()][p1->getX()];
+		if (currentRoom < 0)
+		{
+			while (currentRoom < 0)
+			{
+				Point2D* temp = Astar(&Point2D(p1->getX(), p1->getY()), Point2D(currentTarget.getX(), currentTarget.getY()), -1, &tempLength, currentTarget.getTarget());
+				maze[p1->getY()][p1->getX()] = SPACE;
+				p1->mouve(nextStep);
+				maze[p1->getY()][p1->getX()] = p1->getTarget();
+				display();
+				
+			}
+			A->push_back(p1);
+			return;
+
+		}
+		
+			
 		std::list<Player*> oponnents = p1->getOpponnentsTeam();
 		for (std::list<Player*>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
 		{
 			Target t = **it;
 			if (rooms[currentRoom].containsTarget(t))
 			{
-				p1->shoot(t, maze);
+				p1->shoot(t, maze,security_map);
+				
 			}
 		}
 		Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
@@ -633,15 +656,25 @@ int getColor(Point2D& point) {
 int getRoom(Point2D* p) {
 	return roomMat[p->getY()][p->getX()];
 }
-Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
+Point2D* findRoomExit(std::list<Point2D_hg> solution, int currentRoom)
 {
-	std::vector<Point2D_hg> path;
+	Point2D* r = &solution.back().getPoint();
+	if (currentRoom < 0)
+	{
+		Point2D* ans = (Point2D*)malloc(sizeof(Point2D));
+		
+		ans->setX(r->getX());
+		ans->setY(r->getY());
+		return ans;
+
+	}
+	//std::vector<Point2D_hg> path;
 	while (!solution.empty())
 	{
-		Point2D_hg temp = solution.back();
-		solution.pop_back();
-		path.push_back(temp);
-		if (getRoom(&temp.getPoint()) == currentRoom&&currentRoom>0)
+		Point2D_hg temp = solution.front();
+		solution.pop_front();
+		/*path.push_back(solution.back());*/
+		if (getRoom(&temp.getPoint()) == currentRoom)
 		{
 			Point2D* ans = (Point2D*)malloc(sizeof(Point2D));
 			Point2D* r = &temp.getPoint();
@@ -651,7 +684,12 @@ Point2D* findRoomExit(std::vector<Point2D_hg> solution, int currentRoom)
 		}
 
 	}
-	return new Point2D( &path.back().getPoint());
+
+	Point2D* ans = (Point2D*)malloc(sizeof(Point2D));
+
+	ans->setX(r->getX());
+	ans->setY(r->getY());
+	return ans;
 }
 Point2D* findNextStep(std::vector<Point2D_hg> solution)
 {
@@ -671,7 +709,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length,int targ
 	Point2D lastPos = Point2D(*pos);
 	Point2D* last = NULL;
 	int currentRoom = getRoom(pos);
-	std::vector<Point2D_hg> solution;
+	std::list<Point2D_hg> solution;
 	if (maxG == -1 && getColor(targetPoint) == WALL)
 		return nullptr;
 	if (currentRoom == getRoom(&targetPoint))
@@ -713,7 +751,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length,int targ
 		bestPointPos = bestPointAsParent->getPoint();
 		int room1 = getRoom(&bestPointPos);
 		int room2 = getRoom(&targetPoint);
-		if (bestPointPos.operator==(targetPoint))
+		if (bestPointPos.operator==(targetPoint)&& getRoom(&bestPointPos)==currentRoom)
 		{
 			return new Point2D(bestPoint.getPoint());
 		}
@@ -814,7 +852,7 @@ void action(int roomIndex, Player* p1, Target t)
 	//if target.target ==storage && p1==target refill
 
 	if (isTargetAnopponentPlayer(*p1, t)) {
-		p1->shoot(t, maze);
+		p1->shoot(t, maze,security_map);
 	}
 
 	Point2D* targetPos = new Point2D(t.getX(), t.getY());
