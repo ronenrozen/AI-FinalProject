@@ -388,14 +388,16 @@ void display()
 	DrawMaze();
 	if (pg != nullptr)
 		pg->Draw();
+	if (pb != nullptr)
+		pb->Draw();
 
 	glutSwapBuffers(); // show all
 }
 
 void idle()
 {
-	//if (pb != nullptr && pb->GetIsMoving())
-	//	pb->Move(maze);
+	if (pb != nullptr && pb->GetIsMoving())
+		pb->Move(maze);
 
 	if (pg != nullptr)
 		pg->Move(maze); // move all bullets of grenade
@@ -611,6 +613,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			{
 				int a = 3;
 				p1->shoot(t, maze, security_map);
+				pb = p1->getBullet();
 				display();
 				break;
 
@@ -743,7 +746,12 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 	if (maxG == -1 && getColor(targetPoint) == WALL)
 		return nullptr;
 	if (currentRoom == getRoom(&targetPoint))
+	{
+		*length = 1;
 		return new Point2D(&targetPoint);
+
+	}
+		
 	if (last != NULL)
 	{
 		if (targetPoint == *last && *pos == lastPos)
@@ -801,7 +809,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -814,7 +822,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -827,7 +835,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -840,7 +848,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * ALPHA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);

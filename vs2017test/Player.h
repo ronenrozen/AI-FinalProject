@@ -25,6 +25,7 @@ public:
 	void simulateShoot(int maze[MSZ][MSZ],double ** securityMap);
 	void shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ], std::set<Point2D*>* bullets=nullptr);
 	void setOpponentsTeam(std::list<Player*>opponentsTeam);
+	Bullet* getBullet();
 	std::list<Player*> getOpponnentsTeam();
 private:
 	

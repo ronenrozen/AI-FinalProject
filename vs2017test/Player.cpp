@@ -189,3 +189,8 @@ void Player::setOpponentsTeam(std::list<Player*> opponentsTeam)
 {
 	this->opponentsTeam = opponentsTeam;
 }
+
+Bullet* Player::getBullet()
+{
+	return bullet;
+}
