@@ -26,7 +26,7 @@ void Player::decreaseHealth(int gap)
 
 void Player::refillHealth()
 {
-	this->health = 100;
+	this->health +=10;
 }
 
 void Player::decreaseAmmo()
@@ -95,10 +95,10 @@ void Player::simulateShoot(int maze[MSZ][MSZ], double** securityMap)
 	}
 }
 
-void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
+void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ], std::set<Point2D*>* bullets)
 {
 	if (this->ammo > 0)
-	{
+	{	
 		this->decreaseAmmo();
 		bullet->SetX(x);
 		bullet->SetY(y);
@@ -127,8 +127,14 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 
 				row = bullet->GetY();
 				col = bullet->GetX();
-				lastX = bullet->GetX();
-				lastY = bullet->GetY();
+				if (bullets)
+				{
+					Point2D* p = (Point2D*)malloc(sizeof(Point2D));
+					p->setX(col);
+					p->setY(row);
+					bullets->insert(p);
+				}
+					
 				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
 				{
 					if (maze[row][col] == SPACE)

@@ -584,6 +584,15 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 			while (currentRoom < 0)
 			{
 				Point2D* temp = Astar(&Point2D(p1->getX(), p1->getY()), Point2D(currentTarget.getX(), currentTarget.getY()), -1, &tempLength, currentTarget.getTarget());
+				if (*temp == currentTarget)
+				{
+					int dx = currentTarget.getX() - p1->getX();
+					int dy= currentTarget.getY() - p1->getY();
+					temp->setX(temp->getX() + 2*dx);
+					temp->setY(temp->getY() + 2*dy);
+					break;
+
+				}
 				maze[p1->getY()][p1->getX()] = SPACE;
 				p1->mouve(temp);
 				maze[p1->getY()][p1->getX()] = p1->getTarget();
@@ -604,9 +613,20 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 			Target t = **it;
 			if (rooms[currentRoom].containsTarget(t.getTarget()))
 			{
-				int a = 3;
-				p1->shoot(t, maze,security_map);
-				display();
+				std::set<Point2D*> *bullet= new std::set<Point2D*>();
+				p1->shoot(t, maze,security_map,bullet);
+				int power = bullet->size();
+				for(auto it = bullet->begin();it!=bullet->end();++it)
+				{
+					Point2D* p =*it;
+					
+					security_map[p->getY()][p->getX()] += power;
+					power--;
+					display();
+					security_map[p->getY()][p->getX()] = 0;
+					free(p);
+				}
+				free(bullet);
 				break;
 				
 			}

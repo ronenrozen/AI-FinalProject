@@ -8,6 +8,7 @@
 #include "Bullet.h"
 #include <list>
 #include <math.h>
+#include <set>
 class Player: public Target
 {
 public:
@@ -22,7 +23,7 @@ public:
 	int getVariable();
 	void mouve(Point2D* next);
 	void simulateShoot(int maze[MSZ][MSZ],double ** securityMap);
-	void shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ]);
+	void shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ], std::set<Point2D*>* bullets=nullptr);
 	void setOpponentsTeam(std::list<Player*>opponentsTeam);
 	std::list<Player*> getOpponnentsTeam();
 private:
