@@ -7,7 +7,7 @@
 #pragma once
 
 #define WEIGHT 3
-#define ALPHA 10
+#define ALPHA 2
 class Point2D_hg
 {
 public:

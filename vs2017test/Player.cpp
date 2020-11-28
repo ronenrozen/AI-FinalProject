@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Const.h"
+
 extern int maze[MSZ][MSZ];
 extern bool done;
 
@@ -132,10 +133,13 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 				{
 					if (maze[row][col] == SPACE)
 					{
+						securityMap[row][col] += power;
 						bullet->Move(maze);
 						power = power - 0.01;//need to be checked
 						stop = false;
-						securityMap[row][col] += power;
+						
+						
+
 					}
 
 					if (maze[row][col] == otherPlayer)

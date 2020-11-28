@@ -38,6 +38,7 @@ void Bullet::Move(int maze[MSZ][MSZ])
 			x += dirx * SPEED;
 			y += diry * SPEED;
 		}
+		Draw();
 	}
 }
 
