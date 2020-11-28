@@ -13,7 +13,6 @@ const double SPACE_COST = 0.05;
 const double WALL_COST = 2;
 
 const int MAX_STORAGE = 2; 
-const int MAX_PLAYERS = 2;
 const int MAX_GROUPS = 2;
 const int MAX_PLAYERS_IN_GROUP = 2;
 

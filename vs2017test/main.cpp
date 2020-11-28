@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stack>
 using namespace std;
 
 
@@ -421,7 +422,6 @@ void mouse(int button, int state, int x, int y)
 		pg = new Grenade(bx, by);
 	}
 }
-
 std::set<int> randomTwoRoomsNums() {
 	std::set<int> roomsToStorage;
 	do {
@@ -429,6 +429,11 @@ std::set<int> randomTwoRoomsNums() {
 		roomsToStorage.insert(roomNum);
 	} while (roomsToStorage.size() < 2);
 	return roomsToStorage;
+
+}
+
+int randomRoomNum() {
+	return rand() % NUM_ROOMS;
 
 }
 
@@ -444,21 +449,35 @@ Point2D* getPoint(Room room) {
 	} while (!isFound);
 	return pos;
 }
-
+std::queue<int> setToQueue(std::set<int> roomsForPlayers) {
+	std::queue<int> roomsQ;
+	for (auto it = roomsForPlayers.begin(); it != roomsForPlayers.end(); it++) {
+		roomsQ.push(*it);
+	}
+	return roomsQ;
+}
 void initTwoPlayers()
 {
 	int count = 11;
-	std::set<int> randomTwoRooms = randomTwoRoomsNums();
-	for (auto it = randomTwoRooms.begin(); it != randomTwoRooms.end(); it++, count++) {
-		Room room = rooms[*it];
-		for (int i = 0; i < MAX_PLAYERS_IN_GROUP; i++) {
-			Point2D* playersPos = getPoint(room);
-			Player* player = new Player(playersPos, count, count + (1 * ((i + 1) % 2) - 1 * (i % 2)));
-			maze[playersPos->getY()][playersPos->getX()] = count;
-			count == 11 ? groupA.push_back(player) : groupB.push_back(player);
-			Target t = *player;
-			rooms[*it].addTarget(t);
+	
+	std::set<int> roomsForPlayers;
+	do {
+		roomsForPlayers.insert(randomRoomNum());
+	} while (roomsForPlayers.size() < MAX_PLAYERS_IN_GROUP * MAX_GROUPS);
+	std::queue<int> roomsQ = setToQueue(roomsForPlayers);
+	for (int i = 0; i < MAX_PLAYERS_IN_GROUP * MAX_GROUPS; i++){
+		if (groupA.size() == 2 && groupB.size() ==0) {
+			count++;
 		}
+		int roomNum = roomsQ.front();
+		Room room = rooms[roomNum];
+		Point2D* playersPos = getPoint(room);
+		Player* player = new Player(playersPos, count, count + (1 * ((i + 1) % 2) - 1 * (i % 2)));
+		maze[playersPos->getY()][playersPos->getX()] = count;
+		count == 11 ? groupA.push_back(player) : groupB.push_back(player);
+		Target t = *player;
+		rooms[roomNum].addTarget(t);
+		roomsQ.pop();
 	}
 
 }
