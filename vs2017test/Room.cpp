@@ -73,16 +73,17 @@ std::vector<Point2D> Room::GetObjects()
 	return this->objects;
 }
 
-void Room::addTarget(Target t)
+void Room::addTarget(Target* t)
 {
 	targets.push_back(t);
 }
 
-bool Room::ramoveTarget(Target t)
+bool Room::ramoveTarget(Target* t)
 {
 	for (auto it = targets.begin(); it != targets.end(); ++it)
 	{
-		if (t == *it)
+		Target* target = *it;
+		if (t == target)
 		{
 			targets.erase(it);
 			return true;
@@ -91,11 +92,12 @@ bool Room::ramoveTarget(Target t)
 	return false;
 }
 
-bool Room::containsTarget(int t)
+bool Room::containsTarget(Target t)
 {
 	for (auto it = targets.begin(); it != targets.end(); ++it)
 	{
-		if (t == it->getTarget())
+		Target* target = *it;
+		if (t == target)
 			return true;
 	}
 	return false;
@@ -115,7 +117,7 @@ Point2D* Room::aStar(int m[MSZ][MSZ], Player* p, Point2D* t)
 	{
 		Target temp = **it;
 		Player* i = *it;
-		if (this->containsTarget(temp.getTarget()))
+		if (this->containsTarget(temp))
 			i->simulateShoot(m,securityMap);
 	}
 	AStar* roomA = new AStar(init);

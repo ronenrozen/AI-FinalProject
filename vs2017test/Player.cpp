@@ -62,37 +62,55 @@ void Player::mouve(Point2D* next)
 
 void Player::simulateShoot(int maze[MSZ][MSZ], double** securityMap)
 {
-	for (int i = 0; i < 360; i = i + 20)
+	Bullet* simulate = new Bullet();
+	for (int i = 0; i < 360; i = i + 45)
 	{
-		bullet->SetX(x);
-		bullet->SetY(y);
-		bullet->SetDirX(cos(i));
-		bullet->SetDirY(sin(i));
-		bullet->Shoot();
+		simulate->SetX(x);
+		simulate->SetY(y);
+		simulate->SetDirX(cos(i));
+		simulate->SetDirY(sin(i));
+		simulate->Shoot();
 		bool stop = true;
-		int row, col;
-		double delta = 10;
+		int row=0, col=0 ,lastRow,lastCol;
+		double delta = 20;
 
 		while (stop)
 		{
 			stop = false;
 
-			if (bullet->GetIsMoving())
+			if (simulate->GetIsMoving())
 			{
-				
-				row = MSZ * (bullet->GetY() + 1) / 2;
-				col = MSZ * (bullet->GetX() + 1) / 2;
+				simulate->Move(maze);
+				lastRow = row;
+				lastCol = col;
+				row = simulate->GetY();
+				col = simulate->GetY();
 				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE && delta>0)
 				{
-					securityMap[row][col] += delta;
-					bullet->Move(maze);
+					if (row != lastRow && col != lastCol)
+					{
+						securityMap[row][col] += delta;
+						delta = delta - 0.1;
+					}
+					
+					simulate->Move(maze);
 					stop = true;
+				}
+				else
+				{
+					if (col == x && row == y)
+					{
+						simulate->Move(maze);
+						stop = true;
+					}
+						
 				}
 
 			}
-			delta = delta - 0.1;//need to be checeked
+			//need to be checeked
 		}
 	}
+	free(simulate);
 }
 
 void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ], std::set<Point2D*>* bullets)
@@ -127,13 +145,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ], st
 
 				row = bullet->GetY();
 				col = bullet->GetX();
-				if (bullets)
-				{
-					Point2D* p = (Point2D*)malloc(sizeof(Point2D));
-					p->setX(col);
-					p->setY(row);
-					bullets->insert(p);
-				}
+				
 					
 				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
 				{

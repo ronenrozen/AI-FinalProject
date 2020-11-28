@@ -24,6 +24,7 @@
 int maze[MSZ][MSZ];
 int roomMat[MSZ][MSZ];
 double security_map[MSZ][MSZ] = { 0 };
+int numOfShooting=0;
 
 Room rooms[NUM_ROOMS]; // runs default constructor
 std::list<Player*> groupA;

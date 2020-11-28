@@ -3,15 +3,15 @@ const int W = 600; // window width
 const int H = 600; // window height
 
 const int NUM_ROOMS = 12;
-const int MAX_OBJECTS = 2;
+const int MAX_OBJECTS = 5;
 const int TOP = 1;
 const int BOTTOM = 2;
 const int LEFT = 3;
 const int RIGHT = 4;
 
-const int A_STAR_WEIGHT = 2;
-const int ALPHA = 3;
-const int BETA = 1;
+const int A_STAR_WEIGHT = 1;
+const int ALPHA = 10;
+const int BETA = 8;
 
 const double SPACE_COST = 0.05;
 const double WALL_COST = 2;

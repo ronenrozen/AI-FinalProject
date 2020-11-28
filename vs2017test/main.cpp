@@ -349,10 +349,10 @@ void DrawMaze()
 				glColor3d(0, 0, 0);
 				break;
 			case PLAYER1:
-				glColor3d(0, 0, 1);
+				glColor3d(0, 1, 0);
 				break;
 			case PLAYER2:
-				glColor3d(0, 1, 0);
+				glColor3d(1, 0, 0);
 				break;
 			case OBJECT:
 				glColor3d(0.4, 0, 0.7);
@@ -470,7 +470,7 @@ void initTwoPlayers()
 		Player* player = new Player(playersPos, count, otherPlayer);
 		maze[playersPos->getY()][playersPos->getX()] = count;
 		count == 11 ? groupA.push_back(player) : groupB.push_back(player);
-		Target t = *player;
+		Target* t = player;
 		rooms[roomNum].addTarget(t);
 		roomsQ.pop();
 	}
@@ -487,7 +487,7 @@ void initStorages()
 		Storage* healthStorage = new Storage(healthStoragePos, HEALTH_STORAGE);
 		maze[healthStoragePos->getY()][healthStoragePos->getX()] = HEALTH_STORAGE;
 		healthStorages.push_back(*healthStorage);
-		Target t = *healthStorage;
+		Target * t = healthStorage;
 		rooms[*it].addTarget(t);
 	}
 	std::set<int> randomTwoRoomsForAmmoStorage = randomTwoRoomsNums();
@@ -498,7 +498,7 @@ void initStorages()
 		Storage* ammoStorage = new Storage(ammoStoragePos, AMMO_STORAGE);
 		maze[ammoStoragePos->getY()][ammoStoragePos->getX()] = AMMO_STORAGE;
 		ammoStorages.push_back(*ammoStorage);
-		Target t = *ammoStorage;
+		Target* t = ammoStorage;
 		rooms[*it].addTarget(t);
 	}
 }
@@ -523,10 +523,13 @@ void initObjects()
 void play(std::list<Player*>* A, std::list<Player*>* B)
 {
 	Player* p1 = A->front();
+	int currentRoom = roomMat[p1->getY()][p1->getX()];
 	if (p1->getHealth() <= 0)
 	{
 		A->pop_front();
 		maze[p1->getY()][p1->getX()] = SPACE;
+		Target* remove = p1;
+		rooms[currentRoom].ramoveTarget(remove);
 		display();
 		return;
 	}
@@ -551,7 +554,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			}*/
 	}
 
-	int currentRoom = roomMat[p1->getY()][p1->getX()];
+	
 	if (nextStep != nullptr) {
 		bool r = false;
 		if (currentRoom >= 0 && getRoom(nextStep) >= 0)
@@ -571,6 +574,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 			A->push_back(p1);
 			return;
 		}
+		
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
 		maze[p1->getY()][p1->getX()] = p1->getTarget();
@@ -588,7 +592,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 					int dy = currentTarget.getY() - p1->getY();
 					temp->setX(temp->getX() + 2 * dx);
 					temp->setY(temp->getY() + 2 * dy);
-					break;
+					
 
 				}
 				maze[p1->getY()][p1->getX()] = SPACE;
@@ -597,7 +601,7 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 				display();
 				currentRoom = roomMat[p1->getY()][p1->getX()];
 			}
-			Target currentPlayer = *p1;
+			Target* currentPlayer = p1;
 			rooms[lastRoom].ramoveTarget(currentPlayer);
 			rooms[currentRoom].addTarget(currentPlayer);
 
@@ -609,11 +613,11 @@ void play(std::list<Player*>* A, std::list<Player*>* B)
 		for (std::list<Player*>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
 		{
 			Target t = **it;
-			if (rooms[currentRoom].containsTarget(t.getTarget()))
+			if (rooms[currentRoom].containsTarget(t))
 			{
-				int a = 3;
-				p1->shoot(t, maze, security_map);
 				pb = p1->getBullet();
+				p1->shoot(t, maze, security_map);
+				
 				display();
 				break;
 
@@ -806,10 +810,10 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 			return ans;
 		}
-
+		double randomWeight = ((double)rand() / (RAND_MAX)) * BETA;
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * randomWeight;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -822,7 +826,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * randomWeight;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -835,7 +839,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * randomWeight;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
@@ -848,7 +852,7 @@ Point2D* Astar(Point2D* pos, Point2D targetPoint, int maxG, int* length, int tar
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
 		if (getColor(neighborPos) == SPACE || getColor(neighborPos) == targetColor) {
-			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * BETA;
+			int g = bestPointAsParent->getG() + security_map[neighborPos.getY()][neighborPos.getX()] * randomWeight;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
 			gray_iterator = find(gray.begin(), gray.end(), neighborPos_hg);
