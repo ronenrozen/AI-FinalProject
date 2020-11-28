@@ -102,14 +102,15 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 	double dx = t.getX() - x;
 	double dy = t.getY() - y;
 	double dis = sqrt(pow(dx, 2) + pow(dy, 2));//=sqrt(dx^2 +dy^2) TODO
-	double dirX = x / dis;
-	double dirY = y / dis;
+	double dirX = dx / dis;
+	double dirY = dy / dis;
 	bullet->SetDirX(dirX);
 	bullet->SetDirY(dirY);
 	bullet->Shoot();
 	bool stop = false;
 	bullet->Move(maze);
 	int row, col;
+	double lastX, lastY,currentX,currentY;
 	int power = 50;
 	while (!stop)
 	{
@@ -120,6 +121,8 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 
 			row = bullet->GetY();
 			col = bullet->GetX() ;
+			lastX= bullet->GetX();
+			lastY= bullet->GetY();
 			if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
 			{
 				if (maze[row][col] == SPACE)
@@ -150,8 +153,10 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 					stop = false;
 					bullet->Move(maze);
 				}
-					
-
+				if (stop)
+					currentX = currentX;
+				currentX = bullet->GetX();
+				currentY = bullet->GetY();
 			}
 
 		}
