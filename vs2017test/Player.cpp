@@ -68,17 +68,17 @@ void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
 		bullet->SetDirX(cos(i));
 		bullet->SetDirY(sin(i));
 		bullet->Shoot();
-		bool stop = false;
+		bool stop = true;
 		int row, col;
 		double delta = 10;
 
-		while (!stop)
+		while (stop)
 		{
-			stop = true;
+			stop = false;
 
 			if (bullet->GetIsMoving())
 			{
-				stop = false;
+				
 				row = MSZ * (bullet->GetY() + 1) / 2;
 				col = MSZ * (bullet->GetX() + 1) / 2;
 				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ && maze[row][col] == SPACE && delta>0)
@@ -118,8 +118,8 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 		if (bullet->GetIsMoving())
 		{
 
-			row = MSZ * (bullet->GetY() + 1) / 2;
-			col = MSZ * (bullet->GetX() + 1) / 2;
+			row = bullet->GetY();
+			col = bullet->GetX() ;
 			if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
 			{
 				if (maze[row][col] == SPACE)
@@ -127,7 +127,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 					bullet->Move(maze);
 					power = power - 1;//need to be checked
 					stop = false;
-					securityMap[row][col] += 0.1;
+					securityMap[row][col] += power;
 				}
 
 				if (maze[row][col] == otherPlayer)
@@ -143,8 +143,14 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 				
 
 					opponentPlater->decreaseHealth(power);
-					stop = false;
+					stop = true;
 				}
+				if (row == y && col == x)
+				{
+					stop = false;
+					bullet->Move(maze);
+				}
+					
 
 			}
 

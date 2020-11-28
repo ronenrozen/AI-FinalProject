@@ -562,16 +562,20 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 			nextStep = rooms[currentRoom].aStar(maze, p1, nextStep);
 			r = true;
 		}
-		int c = maze[p1->getY()][p1->getX()];
-		int f = p1->getX() - nextStep->getX();
-		int h = p1->getY() - nextStep->getY();
-		if (h > 1 || h < -1 || f>1 || f < -1)
-			h = h + f;
+		Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
+		if (*nextStep == *targetPoint)
+		{
+			action(currentRoom, p1, currentTarget);
+			A->push_back(p1);
+			return;
+
+		}
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
 		maze[p1->getY()][p1->getX()] = p1->getTarget();
 		display();
 		currentRoom = roomMat[p1->getY()][p1->getX()];
+		int lastRoom = currentRoom;
 		if (currentRoom < 0)
 		{
 			while (currentRoom < 0)
@@ -583,8 +587,10 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 				display();
 				currentRoom = roomMat[p1->getY()][p1->getX()];
 			}
-			A->push_back(p1);
-			return;
+			Target currentPlayer = *p1;
+			rooms[lastRoom].ramoveTarget(currentPlayer);
+			rooms[currentRoom].addTarget(currentPlayer);
+			
 
 		}
 		
@@ -595,16 +601,14 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 			Target t = **it;
 			if (rooms[currentRoom].containsTarget(t))
 			{
+				int a = 3;
 				p1->shoot(t, maze,security_map);
+				display();
 				
 			}
 		}
-		Point2D* targetPoint = new Point2D(currentTarget.getX(), currentTarget.getY());
-		if (*nextStep == *targetPoint)
-		{
-			action(currentRoom, p1, currentTarget);
-
-		}
+		
+		
 		A->push_back(p1);
 	}
 }
