@@ -31,7 +31,7 @@ void Player::refillHealth()
 
 void Player::decreaseAmmo()
 {
-	this->ammo--;
+	this->ammo -= 2;
 }
 
 void Player::refillAmmo()
