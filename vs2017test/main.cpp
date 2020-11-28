@@ -340,7 +340,7 @@ void DrawMaze()
 				glColor3d(0, 1, 0);
 				break;
 			case OBJECT:
-				glColor3d(0.4, 0, 0);
+				glColor3d(0.4, 0, 0.7);
 				break;
 
 
@@ -531,6 +531,8 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 	if (p1->getHealth() <= 0)
 	{
 		A->pop_front();
+		maze[p1->getY()][p1->getX()] == SPACE;
+		display();
 		return;
 	}
 	p1->setOpponentsTeam(*B);
@@ -569,6 +571,10 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 			A->push_back(p1);
 			return;
 
+		}
+		else if (!(maze[nextStep->getY()][nextStep->getX()] == SPACE)) {
+			A->push_back(p1);
+			return;
 		}
 		maze[p1->getY()][p1->getX()] = SPACE;
 		p1->mouve(nextStep);
