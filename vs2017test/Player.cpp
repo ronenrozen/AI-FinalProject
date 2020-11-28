@@ -102,8 +102,11 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 	double dx = t.getX() - x;
 	double dy = t.getY() - y;
 	double dis = sqrt(pow(dx, 2) + pow(dy, 2));//=sqrt(dx^2 +dy^2) TODO
-	double dirX = dx / dis;
-	double dirY = dy / dis;
+	double dirX = dx / (dis / SPEED);
+	double dirY = dy / (dis / SPEED);
+	int currentdisX = dx>0?(int)(dis / SPEED) / (int)dx:0;
+	int currentDisY = dy>0?(int)(dis / SPEED) / (int)dy:0;
+	int doffX = 0, diffY = 0;
 	bullet->SetDirX(dirX);
 	bullet->SetDirY(dirY);
 	bullet->Shoot();
@@ -111,7 +114,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 	bullet->Move(maze);
 	int row, col;
 	double lastX, lastY,currentX,currentY;
-	int power = 50;
+	double power = 50;
 	while (!stop)
 	{
 		stop = true;
@@ -128,7 +131,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 				if (maze[row][col] == SPACE)
 				{
 					bullet->Move(maze);
-					power = power - 1;//need to be checked
+					power = power - 0.01;//need to be checked
 					stop = false;
 					securityMap[row][col] += power;
 				}
@@ -145,7 +148,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 					}
 				
 
-					opponentPlater->decreaseHealth(power);
+					opponentPlater->decreaseHealth(50/dis);
 					stop = true;
 				}
 				if (row == y && col == x)
@@ -154,9 +157,9 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 					bullet->Move(maze);
 				}
 				if (stop)
-					currentX = currentX;
-				currentX = bullet->GetX();
-				currentY = bullet->GetY();
+					currentdisX = currentdisX;
+				diffY++;
+				doffX++;
 			}
 
 		}

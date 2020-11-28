@@ -91,11 +91,11 @@ bool Room::ramoveTarget(Target t)
 	return false;
 }
 
-bool Room::containsTarget(Target t)
+bool Room::containsTarget(int t)
 {
 	for (auto it = targets.begin(); it != targets.end(); ++it)
 	{
-		if (t == *it)
+		if (t == it->getTarget())
 			return true;
 	}
 	return false;
@@ -111,7 +111,7 @@ Point2D* Room::aStar(int m[MSZ][MSZ], Player* p, Point2D* t)
 	{
 		Target temp = **it;
 		Player* i = *it;
-		if (this->containsTarget(temp))
+		if (this->containsTarget(temp.getTarget()))
 			i->simulateShoot(m,securityMap);
 	}
 	AStar* roomA = new AStar(init);

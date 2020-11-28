@@ -472,7 +472,8 @@ void initTwoPlayers()
 		int roomNum = roomsQ.front();
 		Room room = rooms[roomNum];
 		Point2D* playersPos = getPoint(room);
-		Player* player = new Player(playersPos, count, count + (1 * ((i + 1) % 2) - 1 * (i % 2)));
+		int otherPlayer = count == 11 ? 12 : 11;
+		Player* player = new Player(playersPos, count, otherPlayer);
 		maze[playersPos->getY()][playersPos->getX()] = count;
 		count == 11 ? groupA.push_back(player) : groupB.push_back(player);
 		Target t = *player;
@@ -605,11 +606,12 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 		for (std::list<Player*>::iterator it = oponnents.begin(); it != oponnents.end(); ++it)
 		{
 			Target t = **it;
-			if (rooms[currentRoom].containsTarget(t))
+			if (rooms[currentRoom].containsTarget(t.getTarget()))
 			{
 				int a = 3;
 				p1->shoot(t, maze,security_map);
 				display();
+				break;
 				
 			}
 		}

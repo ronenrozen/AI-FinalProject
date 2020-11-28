@@ -33,7 +33,7 @@ public:
 	std::vector<Point2D> GetObjects();
 	void addTarget(Target t);
 	bool ramoveTarget(Target t);
-	bool containsTarget(Target t);
+	bool containsTarget(int t);
 	Point2D* aStar(int m[MSZ][MSZ], Player* p, Point2D* t);
 	void Init(int m[MSZ][MSZ],int roomsMat[MSZ][MSZ]);
 	bool Overlap(int w, int h, int cx, int cy);
