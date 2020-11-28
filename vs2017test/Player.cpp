@@ -10,7 +10,7 @@ Player::Player(Point2D* pos, int target, int otherPlayer) :Target(pos->getX(), p
 	this->health = 100;
 	this->ammo = 100;
 	this->otherPlayer = otherPlayer;
-	this->variable = ((double)rand() / (RAND_MAX));
+	this->variable = ((double)rand() / (RAND_MAX))*100;
 }
 
 void Player::decreaseHealth()

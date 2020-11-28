@@ -648,7 +648,7 @@ std::vector<Target>  createTargetVectorFromPlayers(std::list<Player*> players)
 void game()
 {
 	int mouves = 0;
-	while (!groupA.empty() || !groupB.empty())
+	while (!groupA.empty() && !groupB.empty())
 	{
 		if (mouves % 2 == 0)
 			play(&groupA, &groupB);
@@ -656,6 +656,7 @@ void game()
 			play(&groupB, &groupA);
 		mouves++;
 	}
+	int gameOver = 0;
 }
 void main(int argc, char* argv[])
 {
