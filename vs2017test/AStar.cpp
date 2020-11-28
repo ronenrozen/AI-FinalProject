@@ -16,12 +16,12 @@ AStar::~AStar()
 	delete last;
 }
 
-int AStar::getColor(Point2D* point) {
+int AStar::getColor(Point2D* point,int maze[MSZ][MSZ]) {
 	return maze[point->getY()][point->getX()];
 }
 
 bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][MSZ],int maxG) {
-	if (maxG == -1 && getColor(&targetPoint) == WALL)
+	if (maxG == -1 && getColor(&targetPoint,maze) == WALL)
 		return false;
 	if (last != NULL)
 	{
@@ -60,13 +60,9 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 			}
 			return true;
 		}
-		if (getColor(&bestPoint.getPoint()) != SPACE && getColor(&bestPoint.getPoint()) != getColor(&targetPoint))
-		{
-			int y = 0;
-		}
-
+		
 		neighborPos = Point2D(bestPointPos.getX() + 1, bestPointPos.getY());
-		if (getColor(&neighborPos) == SPACE|| getColor(&neighborPos)== getColor(&targetPoint)) {
+		if (getColor(&neighborPos,maze) == SPACE|| getColor(&neighborPos,maze)== getColor(&targetPoint,maze)) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint,g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -79,7 +75,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX() - 1, bestPointPos.getY());
-		if (getColor(&neighborPos) == SPACE || getColor(&neighborPos) == getColor(&targetPoint)) {
+		if (getColor(&neighborPos, maze) == SPACE || getColor(&neighborPos, maze) == getColor(&targetPoint, maze)) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -92,7 +88,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() + 1);
-		if (getColor(&neighborPos) == SPACE || getColor(&neighborPos) == getColor(&targetPoint)) {
+		if (getColor(&neighborPos, maze) == SPACE || getColor(&neighborPos, maze) == getColor(&targetPoint, maze)) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);
@@ -105,7 +101,7 @@ bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][M
 		}
 
 		neighborPos = Point2D(bestPointPos.getX(), bestPointPos.getY() - 1);
-		if (getColor(&neighborPos) == SPACE || getColor(&neighborPos) == getColor(&targetPoint)) {
+		if (getColor(&neighborPos, maze) == SPACE || getColor(&neighborPos, maze) == getColor(&targetPoint, maze)) {
 			int g = bestPointAsParent->getG() + securityMap[neighborPos.getY()][neighborPos.getX()] * ALPHA;
 			neighborPos_hg = Point2D_hg(bestPointAsParent, neighborPos, targetPoint, g);
 			black_iterator = find(black.begin(), black.end(), neighborPos_hg);

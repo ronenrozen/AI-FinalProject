@@ -25,7 +25,7 @@ private:
 	Point2D* last;
 	Point2D* pos;
 	Point2D lastPos;
-	int getColor(Point2D* point);
+	int getColor(Point2D* point,int maze[MSZ][MSZ]);
 	int maze[MSZ][MSZ];
 };
 #endif //__ASTAR_H
