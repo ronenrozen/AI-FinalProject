@@ -532,7 +532,7 @@ void play(std::list<Player*>*A, std::list<Player*> *B)
 	if (p1->getHealth() <= 0)
 	{
 		A->pop_front();
-		maze[p1->getY()][p1->getX()] == SPACE;
+		maze[p1->getY()][p1->getX()] = SPACE;
 		display();
 		return;
 	}
