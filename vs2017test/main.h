@@ -53,7 +53,6 @@ void BuildPath(Node* pCurrent);
 void display();
 void idle();
 void menu(int choice);
-void mouse(int button, int state, int x, int y);
 std::set<int> randomTwoRoomsNums();
 int randomRoomNum();
 Point2D* getPoint(Room room);

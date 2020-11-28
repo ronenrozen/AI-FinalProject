@@ -392,32 +392,13 @@ void idle()
 
 void menu(int choice)
 {
-	if (choice == 1) // BFS
+	if (choice == 1) //Start Game
 	{
 		game();
 	}
 
 }
 
-// x, y are in pixels
-void mouse(int button, int state, int x, int y)
-{
-	double bx, by, dx, dy, alpha;
-
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-
-		bx = 2 * x / (double)W - 1; // now bx is between -1 and 1
-		by = 2 * (H - y) / (double)H - 1;
-
-		alpha = (rand() % 360) * PI / 180;
-		dx = cos(alpha);
-		dy = sin(alpha);
-
-		// pb = new Bullet(bx, by, false, dx, dy);
-		pg = new Grenade(bx, by);
-	}
-}
 std::set<int> randomTwoRoomsNums() {
 	std::set<int> roomsToStorage;
 	do {
@@ -665,13 +646,9 @@ void main(int argc, char* argv[])
 	glutDisplayFunc(display); // refresh window function
 	glutIdleFunc(idle); // kind of timer function
 
-	glutMouseFunc(mouse);
 
 	glutCreateMenu(menu);
 	glutAddMenuEntry("Play", 1);
-	//glutAddMenuEntry("Shoot Bullet", 1);
-	//glutAddMenuEntry("Throw Grenade", 2);
-	//glutAddMenuEntry("Update Security Map", 3);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	init();
