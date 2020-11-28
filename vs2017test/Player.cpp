@@ -150,7 +150,7 @@ void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 						}
 
 
-						opponentPlater->decreaseHealth(50 / dis);
+						opponentPlater->decreaseHealth(20 / dis);
 						stop = true;
 					}
 					if (row == y && col == x)
