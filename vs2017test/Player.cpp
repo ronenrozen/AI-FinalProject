@@ -96,75 +96,81 @@ void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
 
 void Player::shoot(Target t, int maze[MSZ][MSZ],double securityMap[MSZ][MSZ])
 {
-	//if grnade is in range activate grnade 
-	bullet->SetX(x);
-	bullet->SetY(y);
-	double dx = t.getX() - x;
-	double dy = t.getY() - y;
-	double dis = sqrt(pow(dx, 2) + pow(dy, 2));//=sqrt(dx^2 +dy^2) TODO
-	double dirX = dx / (dis / SPEED);
-	double dirY = dy / (dis / SPEED);
-	int currentdisX = dx>0?(int)(dis / SPEED) / (int)dx:0;
-	int currentDisY = dy>0?(int)(dis / SPEED) / (int)dy:0;
-	int doffX = 0, diffY = 0;
-	bullet->SetDirX(dirX);
-	bullet->SetDirY(dirY);
-	bullet->Shoot();
-	bool stop = false;
-	bullet->Move(maze);
-	int row, col;
-	double lastX, lastY,currentX,currentY;
-	double power = 50;
-	while (!stop)
+	if (this->ammo > 0)
 	{
-		stop = true;
-
-		if (bullet->GetIsMoving())
+		this->decreaseAmmo();
+		bullet->SetX(x);
+		bullet->SetY(y);
+		double dx = t.getX() - x;
+		double dy = t.getY() - y;
+		double dis = sqrt(pow(dx, 2) + pow(dy, 2));//=sqrt(dx^2 +dy^2) TODO
+		double dirX = dx / (dis / SPEED);
+		double dirY = dy / (dis / SPEED);
+		int currentdisX = dx > 0 ? (int)(dis / SPEED) / (int)dx : 0;
+		int currentDisY = dy > 0 ? (int)(dis / SPEED) / (int)dy : 0;
+		int doffX = 0, diffY = 0;
+		bullet->SetDirX(dirX);
+		bullet->SetDirY(dirY);
+		bullet->Shoot();
+		bool stop = false;
+		bullet->Move(maze);
+		int row, col;
+		double lastX, lastY, currentX, currentY;
+		double power = 50;
+		while (!stop)
 		{
+			stop = true;
 
-			row = bullet->GetY();
-			col = bullet->GetX() ;
-			lastX= bullet->GetX();
-			lastY= bullet->GetY();
-			if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
+			if (bullet->GetIsMoving())
 			{
-				if (maze[row][col] == SPACE)
-				{
-					bullet->Move(maze);
-					power = power - 0.01;//need to be checked
-					stop = false;
-					securityMap[row][col] += power;
-				}
 
-				if (maze[row][col] == otherPlayer)
+				row = bullet->GetY();
+				col = bullet->GetX();
+				lastX = bullet->GetX();
+				lastY = bullet->GetY();
+				if (row >= 0 && row < MSZ && col >= 0 && col < MSZ)
 				{
-
-					Player* opponentPlater=nullptr;
-					for (auto it = opponentsTeam.begin(); it != opponentsTeam.end(); ++it)
+					if (maze[row][col] == SPACE)
 					{
-						opponentPlater = *it;
-						if (*opponentPlater == t)
-							break;
+						bullet->Move(maze);
+						power = power - 0.01;//need to be checked
+						stop = false;
+						securityMap[row][col] += power;
 					}
-				
 
-					opponentPlater->decreaseHealth(50/dis);
-					stop = true;
+					if (maze[row][col] == otherPlayer)
+					{
+
+						Player* opponentPlater = nullptr;
+						for (auto it = opponentsTeam.begin(); it != opponentsTeam.end(); ++it)
+						{
+							opponentPlater = *it;
+							if (*opponentPlater == t)
+								break;
+						}
+
+
+						opponentPlater->decreaseHealth(50 / dis);
+						stop = true;
+					}
+					if (row == y && col == x)
+					{
+						stop = false;
+						bullet->Move(maze);
+					}
+					if (stop)
+						currentdisX = currentdisX;
+					diffY++;
+					doffX++;
 				}
-				if (row == y && col == x)
-				{
-					stop = false;
-					bullet->Move(maze);
-				}
-				if (stop)
-					currentdisX = currentdisX;
-				diffY++;
-				doffX++;
+
 			}
 
 		}
 
 	}
+	//if grnade is in range activate grnade 
+	
 }
 std::list<Player*> Player::getOpponnentsTeam() {
 	return opponentsTeam;
