@@ -105,7 +105,11 @@ Point2D* Room::aStar(int m[MSZ][MSZ], Player* p, Point2D* t)
 {
 	Point2D* init = new Point2D(p->getX(), p->getY());
 	Point2D* temp,lastTemp;
-	double securityMap[MSZ][MSZ]= { {0} };
+	double** securityMap= (double**)malloc(sizeof(double*)*MSZ);
+	for (int i = 0; i < MSZ; i++)
+	{
+		securityMap[i] = (double*)calloc(MSZ, sizeof(double));
+	}
 	std::list<Player*> opponnentTeam = p->getOpponnentsTeam();
 	for (std::list<Player*>::iterator it = opponnentTeam.begin(); it != opponnentTeam.end(); ++it)
 	{

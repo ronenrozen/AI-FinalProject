@@ -20,7 +20,7 @@ int AStar::getColor(Point2D* point,int maze[MSZ][MSZ]) {
 	return maze[point->getY()][point->getX()];
 }
 
-bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double securityMap[MSZ][MSZ],int maxG) {
+bool AStar::run(Point2D targetPoint,int maze[MSZ][MSZ],double **securityMap,int maxG) {
 	if (maxG == -1 && getColor(&targetPoint,maze) == WALL)
 		return false;
 	if (last != NULL)

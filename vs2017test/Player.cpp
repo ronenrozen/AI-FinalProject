@@ -59,7 +59,7 @@ void Player::mouve(Point2D* next)
 	this->setY(next->getY());
 }
 
-void Player::simulateShoot(int maze[MSZ][MSZ], double securityMap[MSZ][MSZ])
+void Player::simulateShoot(int maze[MSZ][MSZ], double** securityMap)
 {
 	for (int i = 0; i < 360; i = i + 20)
 	{
